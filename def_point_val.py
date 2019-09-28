@@ -23,13 +23,18 @@
 """
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtWidgets import QAction, QFileDialog
 
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
 from .def_point_val_dialog import DefPointValidatorDialog
 import os.path
+
+#Added lybraries
+from qgis.core import *
+from os.path import expanduser
+from .core import down_load_tiles
 
 
 class DefPointValidator:
@@ -58,7 +63,7 @@ class DefPointValidator:
             self.translator = QTranslator()
             self.translator.load(locale_path)
             QCoreApplication.installTranslator(self.translator)
-
+        self.dlg = DefPointValidatorDialog()
         # Declare instance attributes
         self.actions = []
         self.menu = self.tr(u'&DefPointValidator')
@@ -170,6 +175,88 @@ class DefPointValidator:
         # will be set False in run()
         self.first_start = True
 
+        # Aqui empeza la programacion del complemento.-----------------------------------
+
+        self.dlg.tb_inVector.clicked.connect(self.openVector)
+        self.dlg.tb_outVector.clicked.connect(self.saveVector)
+        self.dlg.tb_outRaster.clicked.connect(self.saveRaster)
+        self.loadVectors()
+
+    def loadVectors(self):
+        """Load vector from qgs"""
+        self.dlg.cb_inVector.clear()
+        layers = [layer for layer in QgsProject.instance().mapLayers().values()]
+        vector_layers = []
+        for layer in layers:
+            if layer.type() == QgsMapLayer.VectorLayer:
+                vector_layers.append(layer.name())
+        self.dlg.cb_inVector.addItems(vector_layers)
+
+    def openVector(self):
+        """Open vector from file"""
+        inFile = str(QFileDialog.getOpenFileName(caption="Open geojsonfile", filter=
+        "Geojsonfiles (*.geojson)")[0])
+        if inFile is not None:
+            self.iface.addVectorLayer(inFile, str.split(os.path.basename(inFile), ".")[0],
+                                      "ogr")
+            self.loadVectors()
+
+    def saveVector(self):
+        """get the file name for points to geojson file"""
+        outFile = str(QFileDialog.getSaveFileName(caption="Save points as: ",
+                                                  filter="Geojsonfiles (*.geojson)")[0])
+        self.setLineVector(outFile)
+
+    def setLineVector(self, text):
+        """Ser GUI text for point save file name"""
+        self.dlg.le_outVector.setText(text)
+
+    def saveRaster(self):
+        """get the file name for points to geojson file"""
+        # outFile = str(QFileDialog.getSaveFileName(caption="Save tiles in: ",filter="Directory (*)")[0])
+        outFile = str(QFileDialog.getExistingDirectory(None, 'Select a folder:', expanduser("~")))
+        self.setLineRaster(outFile)
+
+    def setLineRaster(self, text):
+        """Ser GUI text for point save file name"""
+        self.dlg.le_outRaster.setText(text)
+
+    def getVectorLayer(self):
+        layer = None
+        layername = self.dlg.cb_inVector.currentText()
+        for lyr in QgsProject.instance().mapLayers().values():
+            if lyr.name() == layername:
+                layer = lyr
+                break
+        return layer
+
+    def setVariables(self):
+        self.inVector = self.getVectorLayer()
+        self.yearB = self.dlg.spin_yearB.value()
+        self.yearA = self.dlg.spin_yearA.value()
+        self.monthB = self.dlg.spin_monthB.value()
+        self.monthA = self.dlg.spin_monthA.value()
+        self.outVector = self.dlg.le_outVector.text()
+        self.outRaster = self.dlg.le_outRaster.text()
+        if self.monthB < 10:
+            monthBefore = "0" + str(int(self.monthB))
+        else:
+            monthBefore = str(int(self.monthB))
+        if self.monthA < 10:
+            monthAfter = "0" + str(int(self.monthA))
+        else:
+            monthAfter = str(int(self.monthA))
+
+        self.mosaicNameBefore = "global_monthly_" + str(
+            int(self.yearB)) + "_" + monthBefore + "_mosaic"  # "global_monthly_2019_01_mosaic"
+        self.mosaicNameAfter = "global_monthly_" + str(int(self.yearA)) + "_" + monthAfter + "_mosaic"
+
+    def buffer(self):
+        down_load_tiles.setTiles(self)
+
+        down_load_tiles.getTile(self)
+
+    # Aqui termina la programacion del complemento-------------------------------------------
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -187,7 +274,7 @@ class DefPointValidator:
         # Only create GUI ONCE in callback, so that it will only load when the plugin is started
         if self.first_start == True:
             self.first_start = False
-            self.dlg = DefPointValidatorDialog()
+            #self.dlg = DefPointValidatorDialog()
 
         # show the dialog
         self.dlg.show()
@@ -197,4 +284,6 @@ class DefPointValidator:
         if result:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
+            self.setVariables()
+            self.buffer()
             pass

@@ -1,32 +1,221 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>DefPointValidatorDialogBase</class>
- <widget class="QDialog" name="DefPointValidatorDialogBase" >
-  <property name="geometry" >
+ <widget class="QDialog" name="DefPointValidatorDialogBase">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>450</width>
+    <height>351</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>DefPointValidator</string>
   </property>
-  <widget class="QDialogButtonBox" name="button_box" >
-   <property name="geometry" >
+  <widget class="QDialogButtonBox" name="button_box">
+   <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>240</y>
+     <x>70</x>
+     <y>290</y>
      <width>341</width>
      <height>32</height>
     </rect>
    </property>
-   <property name="orientation" >
+   <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
-   <property name="standardButtons" >
+   <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>40</y>
+     <width>135</width>
+     <height>241</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QComboBox" name="cb_inVector"/>
+    </item>
+    <item>
+     <widget class="QDoubleSpinBox" name="spin_yearB">
+      <property name="decimals">
+       <number>0</number>
+      </property>
+      <property name="minimum">
+       <double>2017.000000000000000</double>
+      </property>
+      <property name="maximum">
+       <double>2030.000000000000000</double>
+      </property>
+      <property name="value">
+       <double>2019.000000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QDoubleSpinBox" name="spin_yearA">
+      <property name="decimals">
+       <number>0</number>
+      </property>
+      <property name="minimum">
+       <double>2017.000000000000000</double>
+      </property>
+      <property name="maximum">
+       <double>2030.000000000000000</double>
+      </property>
+      <property name="value">
+       <double>2019.000000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="le_outVector"/>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="le_outRaster"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>40</y>
+     <width>81</width>
+     <height>241</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QToolButton" name="tb_inVector">
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QDoubleSpinBox" name="spin_monthB">
+      <property name="decimals">
+       <number>0</number>
+      </property>
+      <property name="minimum">
+       <double>1.000000000000000</double>
+      </property>
+      <property name="maximum">
+       <double>12.000000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QDoubleSpinBox" name="spin_monthA">
+      <property name="decimals">
+       <number>0</number>
+      </property>
+      <property name="minimum">
+       <double>1.000000000000000</double>
+      </property>
+      <property name="maximum">
+       <double>12.000000000000000</double>
+      </property>
+      <property name="value">
+       <double>3.000000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QToolButton" name="tb_outVector">
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QToolButton" name="tb_outRaster">
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>90</y>
+     <width>67</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>Month Before</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_8">
+      <property name="text">
+       <string>Month After</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>70</width>
+     <height>241</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>DFP</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Year Before</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>Year After</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>DFP_2</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>Tiles Directory</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>
@@ -37,13 +226,13 @@
    <receiver>DefPointValidatorDialogBase</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="source_label" >
-     <x>248</x>
-     <y>254</y>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
     </hint>
-    <hint type="destination_label" >
-     <x>157</x>
-     <y>274</y>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>
@@ -53,13 +242,13 @@
    <receiver>DefPointValidatorDialogBase</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="source_label" >
-     <x>316</x>
-     <y>260</y>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
     </hint>
-    <hint type="destination_label" >
-     <x>286</x>
-     <y>274</y>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>
