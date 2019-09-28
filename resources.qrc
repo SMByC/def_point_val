@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/def_point_val" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
