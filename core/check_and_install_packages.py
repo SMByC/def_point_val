@@ -64,3 +64,17 @@ def checkPackages():
         from skimage.feature import local_binary_pattern
     except:
         subprocess.check_call(['python3', '-m', 'pip', 'install', 'scikit-image'])
+
+    #Other Libraries
+
+    try:
+        from joblib import dump, load
+    except:
+        subprocess.check_call(['python3', '-m', 'pip', 'install', 'joblib'])
+
+    try:
+        from sklearn import ensemble
+    except:
+        subprocess.check_call(['python3', '-m', 'pip', 'install', '-U','scikit-learn'])
+
+    return "OK"

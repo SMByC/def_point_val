@@ -7,7 +7,40 @@ from qgis.PyQt.QtCore import QVariant
 from qgis.core import *
 
 # Images and computer vision Libraries
-import cv2
+try:
+    import cv2
+except:
+    subprocess.check_call(['python3', '-m', 'pip', 'install', 'opencv-python'])
+#Math ans statistics
+try:
+    import pandas as pd
+except:
+    subprocess.check_call(['python3', '-m', 'pip', 'install', 'pandas'])
+#library for load and save python object including models
+
+try:
+    from joblib import dump, load
+except:
+    subprocess.check_call(['python3', '-m', 'pip', 'install', 'joblib'])
+
+try:
+    import sklearn
+    a=sklearn.__version__
+    if a=='0.20.1':
+        from sklearn import ensemble
+        from sklearn import datasets
+        from sklearn.utils import shuffle
+        from sklearn.metrics import mean_squared_error, explained_variance_score
+    else:
+        subprocess.check_call(['python3', '-m', 'pip', 'uninstall', 'scikit-learn','-y'])
+        subprocess.check_call(['python3', '-m', 'pip', 'install', 'scikit-learn==0.20.1'])
+        from sklearn import ensemble
+        from sklearn import datasets
+        from sklearn.utils import shuffle
+        from sklearn.metrics import mean_squared_error, explained_variance_score
+
+except:
+    subprocess.check_call(['python3', '-m', 'pip', 'install', 'scikit-learn==0.20.1'])
 
 # Custum build functions
 from . import image_procesing_functions
@@ -67,14 +100,50 @@ def getCoupleVectors(self,umbralTamano):
         total = total + 1
         pathB = self.outRaster + '/' + feature['tile_B'] + ".png"
         pathA = self.outRaster + '/' + feature['tile_A'] + ".png"
+        self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsB, 'A')
+        self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsA, 'A')
 
-
-        if os.path.exists(pathB) and os.path.exists(pathA):  # Check if iamges exist
+        if os.path.exists(pathB) and os.path.exists(pathA):  # Check if images exist
             existed = existed + 1
             b = os.path.getsize(pathB)
             a = os.path.getsize(pathA)
+
+            self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsB, 'B')
+            self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsA, 'B')
+
             if b > umbralTamano and a > umbralTamano:
+
                 dicB = getFeatureVector(pathB)
-                self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsB, json.dumps(str(dicB)))
                 dicA = getFeatureVector(pathA)
+                #dicB0 = dicB
+                #dicA0 = dicA
+
+
+                Vb = round(aply_regresion_model(dicB, self.path2model_visibilidad), 0)
+                dicB['visibilidad'] = Vb
+                Bb = round(aply_regresion_model(dicB, self.path2model_boscosidad), 0)
+                dicB['boscosidad'] = Bb
+
+                Vb = round(aply_regresion_model(dicA, self.path2model_visibilidad), 0)
+                dicA['visibilidad'] = Vb
+                Bb = round(aply_regresion_model(dicA, self.path2model_boscosidad), 0)
+                dicA['boscosidad'] = Bb
+
+                self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsB, json.dumps(str(dicB)))
                 self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsA, json.dumps(str(dicA)))
+    self.inVector.commitChanges()
+
+# Funcion para asignar punta de calidad (visibilidad) de 0 a 100%.
+def aply_regresion_model(dic_image, model):
+    """
+    dic_imagen= diccionario con los descriptorsde la imagen
+    modelo: modleo sklearn persistido como objeto python3 con la libreria joblib
+    """
+    diclist = [dic_image]
+    dftemp = pd.DataFrame(diclist)
+    vector_image = dftemp.values  # dftemp[[]].values
+
+    with open(model, 'rb') as fo:
+        clf = load(model)
+        y = clf.predict(vector_image)
+    return y[0]

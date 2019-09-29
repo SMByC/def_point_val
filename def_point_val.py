@@ -165,6 +165,7 @@ class DefPointValidator:
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_path = ':/plugins/def_point_val/icon.png'
+
         self.add_action(
             icon_path,
             text=self.tr(u'DefPoints Validator'),
@@ -250,6 +251,9 @@ class DefPointValidator:
             int(self.yearB)) + "_" + monthBefore + "_mosaic"  # "global_monthly_2019_01_mosaic"
         self.mosaicNameAfter = "global_monthly_" + str(int(self.yearA)) + "_" + monthAfter + "_mosaic"
 
+        self.path2model_boscosidad = os.path.join(os.path.dirname(__file__), 'models','modelo_boscosidad_2019-09-19.joblib')
+        self.path2model_visibilidad = os.path.join(os.path.dirname(__file__), 'models','modelo_visibilidad_2019-09-19.joblib')
+
     def buffer(self):
         down_load_tiles.setTiles(self)
         down_load_tiles.getTile(self)
@@ -273,7 +277,8 @@ class DefPointValidator:
         # Create the dialog with elements (after translation) and keep reference
         # Only create GUI ONCE in callback, so that it will only load when the plugin is started
         if self.first_start == True:
-            check_and_install_packages.checkPackages()
+            #checkpackages = check_and_install_packages.checkPackages()
+            #print(checkpackages)
             self.first_start = False
             #self.dlg = DefPointValidatorDialog()
 
@@ -285,6 +290,7 @@ class DefPointValidator:
         if result:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
+
             self.setVariables()
             self.buffer()
             pass

@@ -1,12 +1,39 @@
 # -*- coding: utf-8 -*-
+import subprocess
 
 from itertools import islice
-import cv2
-import numpy as np
-import math
-from scipy.stats import kurtosis, skew
-import pandas as pd
-from skimage.feature import local_binary_pattern
+
+try:
+    import cv2
+except:
+    subprocess.check_call(['python3', '-m', 'pip', 'install', 'opencv-python'])
+
+try:
+    import numpy as np
+except:
+    subprocess.check_call(['python3', '-m', 'pip', 'install', 'numpy'])
+
+try:
+    import math
+except:
+    subprocess.check_call(['python3', '-m', 'pip', 'install', 'math'])
+
+try:
+
+    from scipy.stats import kurtosis, skew
+except:
+    subprocess.check_call(['python3', '-m', 'pip', 'install', 'scipy'])
+
+try:
+    import pandas as pd
+except:
+    subprocess.check_call(['python3', '-m', 'pip', 'install', 'pandas'])
+
+try:
+    from skimage.feature import local_binary_pattern
+
+except:
+    subprocess.check_call(['python3', '-m', 'pip', 'install', 'scikit-image'])
 
 
 def window(seq, n=2):

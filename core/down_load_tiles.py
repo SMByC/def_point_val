@@ -2,7 +2,12 @@
 
 import requests
 from requests.auth import HTTPBasicAuth
-from pygeotile.tile import Tile
+
+
+try:
+    from pygeotile.tile import Tile
+except:
+    subprocess.check_call(['python3', '-m', 'pip', 'install', 'pyGeoTile'])
 
 from qgis.PyQt.QtCore import QVariant
 from qgis.core import *

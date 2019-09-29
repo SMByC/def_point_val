@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/plugins/def_point_val" >
         <file>icon.png</file>
+        <file>models/modelo_boscosidad_2019-09-19.joblib</file>
+        <file>models/modelo_visibilidad_2019-09-19.joblib</file>
     </qresource>
 </RCC>
