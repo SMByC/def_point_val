@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-import subprocess
-
-try:
-    import pygeotile
-except:
-    subprocess.check_call(['python3', '-m', 'pip', 'install', 'pyGeoTile'])
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -69,24 +63,28 @@ def getTile(self):
     for feature in features:
         x = int(feature['tile_x'])
         y = int(feature['tile_y'])
+        google_x, google_y, zoom = x, y, 15
+        tile = Tile.from_google(google_x, google_y, zoom)
+        self.inVector.changeAttributeValue(feature.id(), id_new_col_bounds, str(tile.bounds))
+
         fileNameB = feature['tile_B']+".png"
         fileNameA = feature['tile_A']+".png"
-        result = requests.get(
-            'https://tiles.planet.com/basemaps/v1/planet-tiles/%s/gmap/%s/%s/%s.png' % (self.mosaicNameBefore, str(15), x, y),
-            auth=HTTPBasicAuth(os.environ['PL_API_KEY_IDEAM'], ''))
+        if not os.path.exists(self.outRaster + '/' + fileNameB):  # Si no existe la imagen se descarga
+            result = requests.get(
+                'https://tiles.planet.com/basemaps/v1/planet-tiles/%s/gmap/%s/%s/%s.png' % (self.mosaicNameBefore, str(15), x, y),
+                auth=HTTPBasicAuth(os.environ['PL_API_KEY_IDEAM'], ''))
 
-        with open(self.outRaster+ '/' + fileNameB, 'wb') as f:
-            f.write(result.content)  # Guardar imagen en archivo
-            google_x, google_y, zoom = x, y, 15
-            tile = Tile.from_google(google_x, google_y, zoom)
-            self.inVector.changeAttributeValue(feature.id(), id_new_col_bounds, str(tile.bounds))
+            with open(self.outRaster+ '/' + fileNameB, 'wb') as f:
+                f.write(result.content)  # Guardar imagen en archivo
 
-        result = requests.get(
-            'https://tiles.planet.com/basemaps/v1/planet-tiles/%s/gmap/%s/%s/%s.png' % (
-            self.mosaicNameAfter, str(15), x, y),
-            auth=HTTPBasicAuth(os.environ['PL_API_KEY_IDEAM'], ''))
 
-        with open(self.outRaster + '/' + fileNameA, 'wb') as f:
-            f.write(result.content)  # Guardar imagen en archivo
+        if not os.path.exists(self.outRaster + '/' + fileNameA):  # Si no existe la imagen se descarga
+            result = requests.get(
+                'https://tiles.planet.com/basemaps/v1/planet-tiles/%s/gmap/%s/%s/%s.png' % (
+                self.mosaicNameAfter, str(15), x, y),
+                auth=HTTPBasicAuth(os.environ['PL_API_KEY_IDEAM'], ''))
+
+            with open(self.outRaster + '/' + fileNameA, 'wb') as f:
+                f.write(result.content)  # Guardar imagen en archivo
 
     self.inVector.commitChanges()
