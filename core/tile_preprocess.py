@@ -82,6 +82,8 @@ def getFeatureVector(fileName):
     return dic
 
 def getCoupleVectors(self,umbralTamano):
+    """get descriptor vector for befor and after images"""
+
 
     features = self.inVector.getFeatures()
 
@@ -120,14 +122,16 @@ def getCoupleVectors(self,umbralTamano):
 
 
                 Vb = round(aply_regresion_model(dicB, self.path2model_visibilidad), 0)
-                dicB['visibilidad'] = Vb
+
                 Bb = round(aply_regresion_model(dicB, self.path2model_boscosidad), 0)
                 dicB['boscosidad'] = Bb
+                dicB['visibilidad'] = Vb
 
                 Vb = round(aply_regresion_model(dicA, self.path2model_visibilidad), 0)
-                dicA['visibilidad'] = Vb
+
                 Bb = round(aply_regresion_model(dicA, self.path2model_boscosidad), 0)
                 dicA['boscosidad'] = Bb
+                dicA['visibilidad'] = Vb
 
                 self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsB, json.dumps(str(dicB)))
                 self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsA, json.dumps(str(dicA)))
@@ -139,11 +143,74 @@ def aply_regresion_model(dic_image, model):
     dic_imagen= diccionario con los descriptorsde la imagen
     modelo: modleo sklearn persistido como objeto python3 con la libreria joblib
     """
+    feature_names = ['0', '1', '10', '11', '12', '13', '14', '15', '16', '17', '18',
+                     '19', '2', '20', '21', '22', '23', '24', '25', '26', '27', '28',
+                     '29', '3', '30', '4', '5', '6', '7', '8', '9', 'avBlue', 'avGreen',
+                     'avRed', 'avWhite', 'bordes', 'bordes32', 'curtWhite',
+                     'curtosisImagenBinarizada', 'frecbean0pow0', 'frecbean0pow1',
+                     'frecbean0pow2', 'frecbean0pow3', 'frecbean1pow0', 'frecbean1pow1',
+                     'frecbean1pow2', 'frecbean1pow3', 'frecbean2pow0', 'frecbean2pow1',
+                     'frecbean2pow2', 'frecbean2pow3', 'frecbean3pow0', 'frecbean3pow1',
+                     'frecbean3pow2', 'frecbean3pow3', 'frecbean4pow0', 'frecbean4pow1',
+                     'frecbean4pow2', 'frecbean4pow3', 'frecbean5pow0', 'frecbean5pow1',
+                     'frecbean5pow2', 'frecbean5pow3', 'frecbean6pow0', 'frecbean6pow1',
+                     'frecbean6pow2', 'frecbean6pow3', 'frecbean7pow0', 'frecbean7pow1',
+                     'frecbean7pow2', 'frecbean7pow3', 'imgSize', 'lines', 'lines32',
+                     'maxBlue', 'maxGreen', 'maxRed', 'maxWhite', 'minBlue', 'minGreen',
+                     'minRed', 'minWhite', 'num_piks_White', 'r0g0b0', 'r0g0b1',
+                     'r0g0b2', 'r0g1b0', 'r0g1b1', 'r0g1b2', 'r0g2b0', 'r0g2b1',
+                     'r0g2b2', 'r1g0b0', 'r1g0b1', 'r1g0b2', 'r1g1b0', 'r1g1b1',
+                     'r1g1b2', 'r1g2b0', 'r1g2b1', 'r1g2b2', 'r2g0b0', 'r2g0b1',
+                     'r2g0b2', 'r2g1b0', 'r2g1b1', 'r2g1b2', 'r2g2b0', 'r2g2b1',
+                     'r2g2b2', 'simetriaImagenBinarizada', 'skewWhite', 'stdBlue',
+                     'stdGreen', 'stdRed', 'stdWhite', 'sumaUmbral', 'textur68_0',
+                     'textur68_1', 'textur68_10', 'textur68_11', 'textur68_12',
+                     'textur68_13', 'textur68_14', 'textur68_15', 'textur68_16',
+                     'textur68_17', 'textur68_2', 'textur68_3', 'textur68_4',
+                     'textur68_5', 'textur68_6', 'textur68_7', 'textur68_8',
+                     'textur68_9', 'textur6_0', 'textur6_1', 'textur6_2', 'textur6_3',
+                     'textur6_4', 'textur6_5', 'textur6_6', 'textur6_7', 'textur6_8']
+
     diclist = [dic_image]
     dftemp = pd.DataFrame(diclist)
-    vector_image = dftemp.values  # dftemp[[]].values
-
+    vector_image = dftemp[feature_names].values#dftemp.values
     with open(model, 'rb') as fo:
         clf = load(model)
         y = clf.predict(vector_image)
     return y[0]
+
+
+def pngs2geotifs(self):
+    zoom = 15
+    pixels = 256
+    epsg = 4326
+     # r=root, d=directories, f = files
+    groupName = "PlanetTiles"
+    root = QgsProject.instance().layerTreeRoot()
+    group = root.addGroup(groupName)
+
+    for r, d, f in os.walk(self.outRaster):
+        for file in f:
+            if '.png' in file:
+                x = str(file).split("_")
+                google_x, google_y = int(x[6]), int(x[7].split(".")[0])
+                pre, ext = os.path.splitext(file)
+                dst_filename = os.path.join(r, pre + ".tif")
+                src_filename = os.path.join(r, file)
+                image_procesing_functions.png2GeoTif(src_filename, dst_filename, google_x, google_y, zoom, pixels, epsg)
+                rasterlyr = QgsRasterLayer(dst_filename, pre + ".tif")
+                QgsProject.instance().addMapLayer(rasterlyr)
+                root = QgsProject.instance().layerTreeRoot()
+                layer = root.findLayer(rasterlyr.id())
+                clone = layer.clone()
+                group.insertChildNode(0, clone)
+                root.removeChildNode(layer)
+                #openRaster(self, dst_filename, pre)
+
+
+
+
+def openRaster(self, path, pre):
+    """Open vector from file"""
+    if path is not None:
+        self.iface.addRasterLayer(path, pre)

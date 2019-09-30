@@ -192,6 +192,7 @@ class DefPointValidator:
                 vector_layers.append(layer.name())
         self.dlg.cb_inVector.addItems(vector_layers)
 
+
     def openVector(self):
         """Open vector from file"""
         inFile = str(QFileDialog.getOpenFileName(caption="Open geojsonfile", filter=
@@ -200,6 +201,8 @@ class DefPointValidator:
             self.iface.addVectorLayer(inFile, str.split(os.path.basename(inFile), ".")[0],
                                       "ogr")
             self.loadVectors()
+
+
 
     def saveVector(self):
         """get the file name for points to geojson file"""
@@ -251,14 +254,15 @@ class DefPointValidator:
             int(self.yearB)) + "_" + monthBefore + "_mosaic"  # "global_monthly_2019_01_mosaic"
         self.mosaicNameAfter = "global_monthly_" + str(int(self.yearA)) + "_" + monthAfter + "_mosaic"
 
-        self.path2model_boscosidad = os.path.join(os.path.dirname(__file__), 'models','modelo_boscosidad_2019-09-19.joblib')
+        self.path2model_boscosidad = os.path.join(os.path.dirname(__file__), 'models','modelo_boscosidad_2019-09-29.joblib')
         self.path2model_visibilidad = os.path.join(os.path.dirname(__file__), 'models','modelo_visibilidad_2019-09-19.joblib')
 
     def buffer(self):
         down_load_tiles.setTiles(self)
         down_load_tiles.getTile(self)
-        umbralTamano = 80000
+        umbralTamano = 100000
         tile_preprocess.getCoupleVectors(self, umbralTamano)
+        tile_preprocess.pngs2geotifs(self)
 
     # Aqui termina la programacion del complemento-------------------------------------------
 
@@ -294,3 +298,5 @@ class DefPointValidator:
             self.setVariables()
             self.buffer()
             pass
+
+    #

@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 import subprocess
 
+try:
+    from pygeotile.tile import Tile
+except:
+    subprocess.check_call(['python3', '-m', 'pip', 'install', 'pyGeoTile'])
+
 from itertools import islice
 
 try:
@@ -35,6 +40,8 @@ try:
 except:
     subprocess.check_call(['python3', '-m', 'pip', 'install', 'scikit-image'])
 
+
+from osgeo import gdal, osr
 
 def window(seq, n=2):
     "Returns a sliding window (of width n) over data from the iterable"
@@ -280,3 +287,49 @@ def get_lbp_descriptors(im):
         dictemp['textur68_' + str(i)] = hist68[1][i]
 
     return dictemp
+
+
+
+
+
+def png2GeoTif(src_filename,dst_filename,google_x,google_y,zoom,pixels,epsg):
+    """
+    This function make image georeference adn convert to .tif format to be able to load it in qgis
+    src_filename ='/path/to/source.tif'
+    dst_filename = '/path/to/destination.tif'
+    google_x, google_y, zoom = 9795, 16143, 15  #Cordenadas del tile en la grilla google o planet que es igual
+    pixels=256 #Numero de pixels de un lado del cuadrado
+    epsg = 4326 #Es el eps de los puntos del IDEAM y el que retorna pygeotile
+    """
+    # Opens source dataset
+    src_ds = gdal.Open(src_filename)
+    format = "GTiff"
+    driver = gdal.GetDriverByName(format)
+    # Open destination dataset
+    dst_ds = driver.CreateCopy(dst_filename, src_ds, 0)
+    #Optener los puntos de referencia
+    tile = Tile.from_google(google_x, google_y, zoom)
+    bounds = tile.bounds #Retorna el punto sur occidental y el punto nororiental del tile.
+    p1 = bounds[0] #Point(latitude=2.6357885741666065, longitude=-72.388916015625)
+    p2 = bounds[1]
+    uperleftx = min([p1[1], p2[1]])
+    uperlefty = max([p1[0], p2[0]])
+    scalex = abs(p1[1]-p2[1])/pixels
+    scaley = abs(p1[0]-p2[0])/pixels
+    # Specify raster location through geotransform array
+    # (uperleftx, scalex, skewx, uperlefty, skewy, scaley)
+    # Scale = size of one pixel in units of raster projection
+    # this example below assumes 100x100
+    gt = [uperleftx, scalex, 0, uperlefty, 0, -scaley]
+    #print(gt)
+    # Set location
+    dst_ds.SetGeoTransform(gt)
+    # Get raster projection
+    srs = osr.SpatialReference()
+    srs.ImportFromEPSG(epsg)
+    dest_wkt = srs.ExportToWkt()
+    # Set projection
+    dst_ds.SetProjection(dest_wkt)
+    # Close files
+    dst_ds = None
+    src_ds = None
