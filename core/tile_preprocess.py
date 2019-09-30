@@ -187,25 +187,44 @@ def pngs2geotifs(self):
      # r=root, d=directories, f = files
     groupName = "PlanetTiles"
     root = QgsProject.instance().layerTreeRoot()
-    group = root.addGroup(groupName)
+    groupt = root.addGroup(groupName)
+    features = self.inVector.getFeatures()
 
-    for r, d, f in os.walk(self.outRaster):
-        for file in f:
-            if '.png' in file:
-                x = str(file).split("_")
-                google_x, google_y = int(x[6]), int(x[7].split(".")[0])
-                pre, ext = os.path.splitext(file)
-                dst_filename = os.path.join(r, pre + ".tif")
-                src_filename = os.path.join(r, file)
-                image_procesing_functions.png2GeoTif(src_filename, dst_filename, google_x, google_y, zoom, pixels, epsg)
-                rasterlyr = QgsRasterLayer(dst_filename, pre + ".tif")
+    for feature in features:
+        raster_layers = [layer for layer in QgsProject.instance().mapLayers().values() if layer.type() == QgsMapLayer.RasterLayer]
+        fileNameA = feature['tile_A'] + ".png"
+        if not fileNameA in raster_layers:
+            fileNameB = feature['tile_B'] + ".png"
+            pathB = os.path.join(self.outRaster, fileNameB)
+            pathA = os.path.join(self.outRaster, fileNameA)
+            xA = str(fileNameA).split("_")
+            google_xA, google_yA = int(xA[6]), int(xA[7].split(".")[0])
+            xB = str(fileNameB).split("_")
+            google_xB, google_yB = int(xB[6]), int(xB[7].split(".")[0])
+            if google_xA == google_xB and google_yA == google_yB:
+                group = groupt.addGroup(xA[6] + '_' + xA[7].split(".")[0])
+
+                pathAtif = os.path.join(self.outRaster, feature['tile_A'] + ".tif")
+                pathBtif = os.path.join(self.outRaster, feature['tile_b'] + ".tif")
+
+                image_procesing_functions.png2GeoTif(pathB, pathBtif, google_xB, google_yB, zoom, pixels, epsg)
+                rasterlyr = QgsRasterLayer(pathBtif, feature['tile_B'] + ".tif")
                 QgsProject.instance().addMapLayer(rasterlyr)
-                root = QgsProject.instance().layerTreeRoot()
                 layer = root.findLayer(rasterlyr.id())
                 clone = layer.clone()
                 group.insertChildNode(0, clone)
                 root.removeChildNode(layer)
-                #openRaster(self, dst_filename, pre)
+
+                image_procesing_functions.png2GeoTif(pathA, pathAtif, google_xA, google_yA, zoom, pixels, epsg)
+                rasterlyr = QgsRasterLayer(pathAtif, feature['tile_A'] + ".tif")
+                QgsProject.instance().addMapLayer(rasterlyr)
+                layer = root.findLayer(rasterlyr.id())
+                clone = layer.clone()
+                group.insertChildNode(0, clone)
+                root.removeChildNode(layer)
+
+
+        #openRaster(self, dst_filename, pre)
 
 
 
