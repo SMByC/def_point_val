@@ -34,7 +34,7 @@ import os.path
 #Added lybraries
 from qgis.core import *
 from os.path import expanduser
-from .core import check_and_install_packages, down_load_tiles, tile_preprocess
+from .core import  down_load_tiles, tile_preprocess
 
 class DefPointValidator:
     """QGIS Plugin Implementation."""
@@ -256,13 +256,16 @@ class DefPointValidator:
 
         self.path2model_boscosidad = os.path.join(os.path.dirname(__file__), 'models','modelo_boscosidad_2019-09-29.joblib')
         self.path2model_visibilidad = os.path.join(os.path.dirname(__file__), 'models','modelo_visibilidad_2019-09-19.joblib')
+        self.path2model_deforest = os.path.join(os.path.dirname(__file__), 'models','modelo_cambio_2019-10-16_ACCU_0.8688024408848207.joblib')
 
     def buffer(self):
         down_load_tiles.setTiles(self)
         down_load_tiles.getTile(self)
         umbralTamano = 100000
-        tile_preprocess.getCoupleVectors(self, umbralTamano)
-        tile_preprocess.pngs2geotifs(self)
+        umbralVisibilidad = 80
+        tile_preprocess.getCoupleVectors(self, umbralTamano, umbralVisibilidad )
+        tile_preprocess.changePointColor(self)
+        #tile_preprocess.pngs2geotifs(self)
 
     # Aqui termina la programacion del complemento-------------------------------------------
 
@@ -298,5 +301,4 @@ class DefPointValidator:
             self.setVariables()
             self.buffer()
             pass
-
     #

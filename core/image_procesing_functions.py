@@ -288,6 +288,16 @@ def get_lbp_descriptors(im):
 
     return dictemp
 
+def get_orb_descriptors(im):
+    dictemp = {}
+    orb = cv2.ORB_create()
+    im0 = remove_transparency(im, 0)
+    kp, des = orb.detectAndCompute(im0, None)
+    dictemp['orbKp'] = kp
+    dictemp['orbDes'] = des
+
+    return dictemp
+
 
 
 
