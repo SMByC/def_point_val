@@ -110,23 +110,29 @@ def getCoupleVectors(self, umbralTamano, umbralVisibilidad):
 
     total=0
     existed=0
+    goodones=0
+    no_info=0
+    defores=0
+    no_deforest=0
     for feature in features:
         total = total + 1
         pathB = self.outRaster + '/' + feature['tile_B'] + ".png"
         pathA = self.outRaster + '/' + feature['tile_A'] + ".png"
         self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsB, 'A')
         self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsA, 'A')
-        self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsD, -1)
+        forestChange = -3
+        self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsD, forestChange)
 
         if os.path.exists(pathB) and os.path.exists(pathA):  # Check if images exist
-            existed = existed + 1
+
             b = os.path.getsize(pathB)
             a = os.path.getsize(pathA)
-
             self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsB, 'B')
             self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsA, 'B')
-            self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsD, -1)
-
+            forestChange=-2
+            self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsD, forestChange)
+            if b > 2600 and a > 2600:
+                existed = existed + 1
             if b > umbralTamano and a > umbralTamano:
 
                 dicB = getFeatureVector(pathB)
@@ -149,10 +155,11 @@ def getCoupleVectors(self, umbralTamano, umbralVisibilidad):
 
                 self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsB, 'C')
                 self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsA, 'C')
-                self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsD, -1)
+                forestChange=-1
+                self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsD, forestChange)
 
                 if Va > umbralVisibilidad and Vb > umbralVisibilidad:
-
+                    goodones = goodones+1
                     #Search for orb feature matching
                     try:
                         bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
@@ -180,12 +187,25 @@ def getCoupleVectors(self, umbralTamano, umbralVisibilidad):
 
                     forestChange = aply_clasification_model(dic, self.path2model_deforest)
 
+
                     B = 'Bosocosidad: ' + str(dicB['boscosidad']) + ', Visibilidad: ' + str(dicB['visibilidad'])
                     A = 'Bosocosidad: ' + str(dicA['boscosidad']) + ', Visibilidad: ' + str(dicA['visibilidad'])
                     self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsB, B)
                     self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsA,
                                                        A)  # json.dumps(str(dicA['boscosidad'])))
                     self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsD, int(forestChange))
+            if forestChange <0:
+                no_info = no_info +1
+            elif forestChange == 1:
+                defores = defores+1
+            elif forestChange == 0:
+                no_deforest = no_deforest+1
+        resume = {'Total_number_of_points': total, 'Points_with_info': existed, 'Points_with_aceptable_images':goodones,
+                 'Points_not_posibel_evaluation': no_info, 'Points_with_deforestation': defores,
+                 'Points_without_deforetation': no_deforest}
+
+        with open(self.outRaster+ '/' + 'resume.json', 'w') as json_file:
+            json.dump(resume, json_file)
 
     self.inVector.commitChanges()
 
