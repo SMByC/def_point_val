@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>core.down_load_tiles &#8212; DefPointValidator 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DefPointValidator 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for core.down_load_tiles</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">requests.auth</span> <span class="k">import</span> <span class="n">HTTPBasicAuth</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pygeotile.tile</span> <span class="k">import</span> <span class="n">Tile</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;pyGeoTile&#39;</span><span class="p">])</span>
+
+<span class="kn">from</span> <span class="nn">qgis.PyQt.QtCore</span> <span class="k">import</span> <span class="n">QVariant</span>
+<span class="kn">from</span> <span class="nn">qgis.core</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+
+<div class="viewcode-block" id="chipTiles"><a class="viewcode-back" href="../../code.html#core.down_load_tiles.chipTiles">[docs]</a><span class="k">def</span> <span class="nf">chipTiles</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">z</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    find Planet Tile for a give point p at given zool level z</span>
+<span class="sd">    :param p: (lat, long)</span>
+<span class="sd">    :param z: 15</span>
+<span class="sd">    :return: x,y,z tile google xyz tile grid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">,</span> <span class="n">zoom</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">z</span>
+    <span class="n">tile</span> <span class="o">=</span> <span class="n">Tile</span><span class="o">.</span><span class="n">for_latitude_longitude</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">,</span> <span class="n">zoom</span><span class="p">)</span>
+    <span class="n">tile</span> <span class="o">=</span> <span class="n">tile</span><span class="o">.</span><span class="n">google</span>
+    <span class="k">return</span> <span class="n">tile</span></div>
+
+<div class="viewcode-block" id="setTiles"><a class="viewcode-back" href="../../code.html#core.down_load_tiles.setTiles">[docs]</a><span class="k">def</span> <span class="nf">setTiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    find google tiles for every point and add atribute to vectorfile</span>
+<span class="sd">    :param self:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">getFeatures</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">startEditing</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">fieldNameIndex</span><span class="p">(</span><span class="s2">&quot;tile_B&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">addAttributes</span><span class="p">([</span><span class="n">QgsField</span><span class="p">(</span><span class="s2">&quot;tile_B&quot;</span><span class="p">,</span> <span class="n">QVariant</span><span class="o">.</span><span class="n">String</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">addAttributes</span><span class="p">([</span><span class="n">QgsField</span><span class="p">(</span><span class="s2">&quot;tile_A&quot;</span><span class="p">,</span> <span class="n">QVariant</span><span class="o">.</span><span class="n">String</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">addAttributes</span><span class="p">([</span><span class="n">QgsField</span><span class="p">(</span><span class="s2">&quot;tile_x&quot;</span><span class="p">,</span> <span class="n">QVariant</span><span class="o">.</span><span class="n">String</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">addAttributes</span><span class="p">([</span><span class="n">QgsField</span><span class="p">(</span><span class="s2">&quot;tile_y&quot;</span><span class="p">,</span> <span class="n">QVariant</span><span class="o">.</span><span class="n">String</span><span class="p">)])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">updateFields</span><span class="p">()</span>
+
+    <span class="n">id_new_col_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">fieldNameIndex</span><span class="p">(</span><span class="s2">&quot;tile_B&quot;</span><span class="p">)</span>
+    <span class="n">id_new_col_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">fieldNameIndex</span><span class="p">(</span><span class="s2">&quot;tile_A&quot;</span><span class="p">)</span>
+    <span class="n">id_new_col_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">fieldNameIndex</span><span class="p">(</span><span class="s2">&quot;tile_x&quot;</span><span class="p">)</span>
+    <span class="n">id_new_col_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">fieldNameIndex</span><span class="p">(</span><span class="s2">&quot;tile_y&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">:</span>
+        <span class="n">geom</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
+        <span class="n">centroid</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">centroid</span><span class="p">()</span>
+        <span class="n">longitude</span> <span class="o">=</span> <span class="n">centroid</span><span class="o">.</span><span class="n">asPoint</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+        <span class="n">latitude</span> <span class="o">=</span> <span class="n">centroid</span><span class="o">.</span><span class="n">asPoint</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">]</span>
+        <span class="n">ptile</span> <span class="o">=</span> <span class="n">chipTiles</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+        <span class="n">tile_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mosaicNameBefore</span> <span class="o">+</span> <span class="s2">&quot;_15_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ptile</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ptile</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">tile_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mosaicNameAfter</span> <span class="o">+</span> <span class="s2">&quot;_15_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ptile</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ptile</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_B</span><span class="p">,</span> <span class="n">tile_b</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_A</span><span class="p">,</span> <span class="n">tile_a</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_x</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ptile</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_y</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ptile</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">commitChanges</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="getTile"><a class="viewcode-back" href="../../code.html#core.down_load_tiles.getTile">[docs]</a><span class="k">def</span> <span class="nf">getTile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    download tile from planet</span>
+<span class="sd">    :param self:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outRaster</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outRaster</span><span class="p">)</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">getFeatures</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">startEditing</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">fieldNameIndex</span><span class="p">(</span><span class="s2">&quot;bounds&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">addAttributes</span><span class="p">([</span><span class="n">QgsField</span><span class="p">(</span><span class="s2">&quot;bounds&quot;</span><span class="p">,</span> <span class="n">QVariant</span><span class="o">.</span><span class="n">String</span><span class="p">)])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">updateFields</span><span class="p">()</span>
+
+    <span class="n">id_new_col_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">fieldNameIndex</span><span class="p">(</span><span class="s2">&quot;bounds&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s1">&#39;tile_x&#39;</span><span class="p">])</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s1">&#39;tile_y&#39;</span><span class="p">])</span>
+        <span class="n">google_x</span><span class="p">,</span> <span class="n">google_y</span><span class="p">,</span> <span class="n">zoom</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">15</span>
+        <span class="n">tile</span> <span class="o">=</span> <span class="n">Tile</span><span class="o">.</span><span class="n">from_google</span><span class="p">(</span><span class="n">google_x</span><span class="p">,</span> <span class="n">google_y</span><span class="p">,</span> <span class="n">zoom</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_bounds</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">tile</span><span class="o">.</span><span class="n">bounds</span><span class="p">))</span>
+
+        <span class="n">fileNameB</span> <span class="o">=</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;tile_B&#39;</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;.png&quot;</span>
+        <span class="n">fileNameA</span> <span class="o">=</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;tile_A&#39;</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;.png&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outRaster</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">fileNameB</span><span class="p">):</span>  <span class="c1"># Si no existe la imagen se descarga</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s1">&#39;https://tiles.planet.com/basemaps/v1/planet-tiles/</span><span class="si">%s</span><span class="s1">/gmap/</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mosaicNameBefore</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="mi">15</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span>
+                <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PL_API_KEY_IDEAM&#39;</span><span class="p">],</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outRaster</span><span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">fileNameB</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>  <span class="c1"># Guardar imagen en archivo</span>
+
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outRaster</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">fileNameA</span><span class="p">):</span>  <span class="c1"># Si no existe la imagen se descarga</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s1">&#39;https://tiles.planet.com/basemaps/v1/planet-tiles/</span><span class="si">%s</span><span class="s1">/gmap/</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mosaicNameAfter</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="mi">15</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span>
+                <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PL_API_KEY_IDEAM&#39;</span><span class="p">],</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outRaster</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">fileNameA</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>  <span class="c1"># Guardar imagen en archivo</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">commitChanges</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DefPointValidator 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, ga.becerra10, hc.torres , my.castro10, rj.santacruz @uniandes.edu.co;   ggalindo@ideam.gov.co.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>

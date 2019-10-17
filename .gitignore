@@ -1,0 +1,23 @@
+ResumenEstR.csv
+
+__pycache__
+
+borrar.py
+
+credentials.txt
+
+ejecutar_Subir_Datos.bat
+
+
+ftpstart.bat
+
+
+# Environments
+/.idea
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/

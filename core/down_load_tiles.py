@@ -15,13 +15,23 @@ from qgis.core import *
 import os.path
 
 def chipTiles(p,z):
+    """
+    find Planet Tile for a give point p at given zool level z
+    :param p: (lat, long)
+    :param z: 15
+    :return: x,y,z tile google xyz tile grid
+    """
     latitude, longitude, zoom = p[0],p[1], z
     tile = Tile.for_latitude_longitude(latitude, longitude, zoom)
     tile = tile.google
     return tile
 
 def setTiles(self):
-    """find google tiles for every point and add atribute to vectorfile"""
+    """
+    find google tiles for every point and add atribute to vectorfile
+    :param self:
+    :return:
+    """
     features = self.inVector.getFeatures()
     self.inVector.startEditing()
     if self.inVector.dataProvider().fieldNameIndex("tile_B") == -1:
@@ -55,7 +65,11 @@ def setTiles(self):
 
 
 def getTile(self):
-    "download tile from planet"
+    """
+    download tile from planet
+    :param self:
+    :return:
+    """
     if not os.path.exists(self.outRaster):
         os.mkdir(self.outRaster)
     features = self.inVector.getFeatures()

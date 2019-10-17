@@ -1,0 +1,502 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>core.image_procesing_functions &#8212; DefPointValidator 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DefPointValidator 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for core.image_procesing_functions</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pygeotile.tile</span> <span class="k">import</span> <span class="n">Tile</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;pyGeoTile&#39;</span><span class="p">])</span>
+
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">islice</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">cv2</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;opencv-python&#39;</span><span class="p">])</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;numpy&#39;</span><span class="p">])</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">math</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;math&#39;</span><span class="p">])</span>
+
+<span class="k">try</span><span class="p">:</span>
+
+    <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">kurtosis</span><span class="p">,</span> <span class="n">skew</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;scipy&#39;</span><span class="p">])</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;pandas&#39;</span><span class="p">])</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">skimage.feature</span> <span class="k">import</span> <span class="n">local_binary_pattern</span>
+
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;scikit-image&#39;</span><span class="p">])</span>
+
+
+<span class="kn">from</span> <span class="nn">osgeo</span> <span class="k">import</span> <span class="n">gdal</span><span class="p">,</span> <span class="n">osr</span>
+
+<div class="viewcode-block" id="window"><a class="viewcode-back" href="../../code.html#core.image_procesing_functions.window">[docs]</a><span class="k">def</span> <span class="nf">window</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a sliding window (of width n) over data from the iterable</span>
+
+<span class="sd">    :param seq: secuentia list or vector</span>
+
+<span class="sd">    :param n: windows size</span>
+
+<span class="sd">    :return: iterable of windows</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="s2">&quot;   s -&gt; (s0,s1,...s[n-1]), (s1,s2,...,sn), ...                   &quot;</span>
+    <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="n">n</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">result</span>
+    <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="p">(</span><span class="n">elem</span><span class="p">,)</span>
+        <span class="k">yield</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="count_maxima"><a class="viewcode-back" href="../../code.html#core.image_procesing_functions.count_maxima">[docs]</a><span class="k">def</span> <span class="nf">count_maxima</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;find local maximus in a one dimentional vector</span>
+
+<span class="sd">    :param l: one dimentional vector</span>
+
+<span class="sd">    :return: the count of local maxima finded</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># b, the middle value, is larger than both a and c</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="n">c</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">window</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="remove_transparency"><a class="viewcode-back" href="../../code.html#core.image_procesing_functions.remove_transparency">[docs]</a><span class="k">def</span> <span class="nf">remove_transparency</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">background_color</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;remove 4th layer of .png images</span>
+
+<span class="sd">    :param source:</span>
+
+<span class="sd">    :param background_color: layer ypu want to remove</span>
+
+<span class="sd">    :return: RGB image.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">source</span><span class="p">[:,:,:</span><span class="mi">3</span><span class="p">],</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+    <span class="n">source_mask</span> <span class="o">=</span> <span class="n">source</span><span class="p">[:,:,</span><span class="mi">3</span><span class="p">]</span>  <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">)</span>
+
+    <span class="n">background_mask</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">source_mask</span>
+
+    <span class="n">bg_part</span> <span class="o">=</span> <span class="p">(</span><span class="n">background_color</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">background_mask</span><span class="p">)</span>
+    <span class="n">source_part</span> <span class="o">=</span> <span class="p">(</span><span class="n">source_img</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">source_mask</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">addWeighted</span><span class="p">(</span><span class="n">bg_part</span><span class="p">,</span> <span class="mf">255.0</span><span class="p">,</span> <span class="n">source_part</span><span class="p">,</span> <span class="mf">255.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="getBorderFeatures"><a class="viewcode-back" href="../../code.html#core.image_procesing_functions.getBorderFeatures">[docs]</a><span class="k">def</span> <span class="nf">getBorderFeatures</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">nim</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;genear descriptores basados en bordes No de lineas rectas, cantidad de bordes img es una imagen png 256x256 cargada con cv2</span>
+
+<span class="sd">    :param img: 256x256 RGB intensity normalice image readed with OCV</span>
+
+<span class="sd">    :param nim: image flattern in a one dimention vecto</span>
+
+<span class="sd">    :return: dictionary with some border features: number of lines, numbre of border pixels in image</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># primero para la imagen si reducir</span>
+
+    <span class="n">imgColor</span> <span class="o">=</span> <span class="n">nim</span>
+    <span class="n">img2</span> <span class="o">=</span> <span class="n">remove_transparency</span><span class="p">(</span><span class="n">imgColor</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Se detectan bordes usando Canny</span>
+    <span class="n">img_edged</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">Canny</span><span class="p">(</span><span class="n">img2</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+    <span class="n">bordes</span> <span class="o">=</span> <span class="n">img_edged</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="c1"># Se cuentan las linea rectas usando HoughLines</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">HoughLines</span><span class="p">(</span><span class="n">img_edged</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">,</span>
+                           <span class="mi">64</span><span class="p">)</span>  <span class="c1"># nomrmalmente deben se entre la curata y la midad de loz pixeles W.</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">lines</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Luego para la imagen encogida</span>
+
+    <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+    <span class="n">imgColor</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">norm_type</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">NORM_MINMAX</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">CV_32F</span><span class="p">)</span>
+    <span class="n">imgGray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">imgColor</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+    <span class="n">imgGray</span> <span class="o">=</span> <span class="n">imgGray</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;uint8&#39;</span><span class="p">)</span>
+
+    <span class="n">std</span> <span class="o">=</span> <span class="n">imgGray</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">media</span> <span class="o">=</span> <span class="n">imgGray</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ventana</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">imgGray</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Se detectan los bordes usando Canny</span>
+    <span class="n">img2</span> <span class="o">=</span> <span class="n">remove_transparency</span><span class="p">(</span><span class="n">imgColor</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">img_edged</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">Canny</span><span class="p">(</span><span class="n">img2</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+    <span class="n">bordes32</span> <span class="o">=</span> <span class="n">img_edged</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="c1"># Se binariza la imagen usando umbral adaptativo queda ub &quot;borde de la imagen con una textura simplificada&quot;</span>
+    <span class="n">umbral</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">adaptiveThreshold</span><span class="p">(</span><span class="n">imgGray</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">ADAPTIVE_THRESH_GAUSSIAN_C</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">THRESH_BINARY</span><span class="p">,</span> <span class="n">ventana</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">std</span><span class="p">)</span>
+
+    <span class="c1"># Binarizacion de la imagen usando Otsu</span>
+    <span class="n">blur</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">imgGray</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">ret3</span><span class="p">,</span> <span class="n">th3</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">blur</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">THRESH_BINARY</span> <span class="o">+</span> <span class="n">cv2</span><span class="o">.</span><span class="n">THRESH_OTSU</span><span class="p">)</span>
+
+    <span class="c1"># Detectar y contar lineas rectas</span>
+    <span class="n">lines32</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">HoughLines</span><span class="p">(</span><span class="n">img_edged</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">lines32</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">lines32</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines32</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lines32</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">lines32</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">simetriaImagenBinarizada</span> <span class="o">=</span> <span class="n">skew</span><span class="p">(</span><span class="n">th3</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">curtosisImagenBinarizada</span> <span class="o">=</span> <span class="n">kurtosis</span><span class="p">(</span><span class="n">th3</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">sumaUmbral</span> <span class="o">=</span> <span class="n">umbral</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;lines&#39;</span><span class="p">:</span> <span class="n">lines</span><span class="p">,</span> <span class="s1">&#39;bordes&#39;</span><span class="p">:</span> <span class="n">bordes</span><span class="p">,</span> <span class="s1">&#39;lines32&#39;</span><span class="p">:</span> <span class="n">lines32</span><span class="p">,</span>
+            <span class="s1">&#39;bordes32&#39;</span><span class="p">:</span> <span class="n">bordes32</span><span class="p">,</span> <span class="s1">&#39;simetriaImagenBinarizada&#39;</span><span class="p">:</span> <span class="n">simetriaImagenBinarizada</span><span class="p">,</span>
+            <span class="s1">&#39;curtosisImagenBinarizada&#39;</span><span class="p">:</span> <span class="n">curtosisImagenBinarizada</span><span class="p">,</span> <span class="s1">&#39;sumaUmbral&#39;</span><span class="p">:</span> <span class="n">sumaUmbral</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="getBasicFeatures"><a class="viewcode-back" href="../../code.html#core.image_procesing_functions.getBasicFeatures">[docs]</a><span class="k">def</span> <span class="nf">getBasicFeatures</span><span class="p">(</span><span class="n">nim</span><span class="p">,</span><span class="n">fltim</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates basic statistical descriptor or features</span>
+
+<span class="sd">    :param nim:  256x256 RGB intensity normaliced image readed with OCV</span>
+
+<span class="sd">    :param fltim: image flattern in a one dimention vecto</span>
+
+<span class="sd">    :return: dictionary with some basic descritive staticstis</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hist_grayim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">fltim</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dictemp</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">average</span> <span class="o">=</span> <span class="n">nim</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">skewness</span> <span class="o">=</span> <span class="n">skew</span><span class="p">(</span><span class="n">fltim</span><span class="p">)</span>
+    <span class="n">curtosis</span> <span class="o">=</span> <span class="n">kurtosis</span><span class="p">(</span><span class="n">fltim</span><span class="p">)</span>
+
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;avWhite&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">average</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">average</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">average</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;skewWhite&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skewness</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;curtWhite&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">curtosis</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;num_piks_White&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">count_maxima</span><span class="p">(</span><span class="n">hist_grayim</span><span class="p">)</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;avRed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">average</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;avGreen&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">average</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;avBlue&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">average</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">std</span> <span class="o">=</span> <span class="n">nim</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;stdWhite&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">std</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">std</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">std</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;stdRed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">std</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;stdGreen&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">std</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;stdBlue&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">std</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">minimo</span> <span class="o">=</span> <span class="n">nim</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;minWhite&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">minimo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">minimo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">minimo</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;minRed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">minimo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;minGreen&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">minimo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;minBlue&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">minimo</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">maximo</span> <span class="o">=</span> <span class="n">nim</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;maxWhite&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maximo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">maximo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">maximo</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;maxRed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maximo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;maxGreen&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maximo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;maxBlue&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maximo</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">dictemp</span></div>
+
+
+<div class="viewcode-block" id="get_color_histogram"><a class="viewcode-back" href="../../code.html#core.image_procesing_functions.get_color_histogram">[docs]</a><span class="k">def</span> <span class="nf">get_color_histogram</span><span class="p">(</span><span class="n">nim</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates a histogram of colors in 3x3x3 color combinations over min-max normaliced image as a resumed color descriptor</span>
+
+<span class="sd">    :param nim: 256x256 RGB intensity normalice image readed with OCV</span>
+
+<span class="sd">    :return: 3X3 RGB histogram</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Aqui se optinen el histogramade colores</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">calcHist</span><span class="p">([</span><span class="n">nim</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">])</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">dictemp</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="n">dictemp</span><span class="p">[(</span><span class="s1">&#39;r&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;g&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;b&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">))]</span> <span class="o">=</span> <span class="n">hist</span><span class="p">[</span><span class="n">l</span><span class="p">]</span>
+                <span class="n">l</span> <span class="o">=</span> <span class="n">l</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">dictemp</span></div>
+
+
+<div class="viewcode-block" id="get_ftt_descriptors"><a class="viewcode-back" href="../../code.html#core.image_procesing_functions.get_ftt_descriptors">[docs]</a><span class="k">def</span> <span class="nf">get_ftt_descriptors</span><span class="p">(</span><span class="n">fltim</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates FFT2 transfor of image flattered and construct related resum descriptors</span>
+
+<span class="sd">    :param fltim: image flattern in a one dimention vector</span>
+
+<span class="sd">    :return: dictionary with 32 bean sumiriced FTT and some main FTT componet for ebery bean.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dictemp</span><span class="o">=</span><span class="p">{}</span>
+    <span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">nn</span> <span class="o">=</span> <span class="n">fltim</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">sp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">fltim</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">nn</span><span class="p">)</span>  <span class="c1"># Optenenos la trasformada de fourier de la seri</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">nn</span><span class="p">)</span>
+    <span class="c1"># Determinamos las frecuencias de muestreo.</span>
+    <span class="c1"># como la imagen esta compuesa por 65mil pixeles la frecuencia maxima es 65mil muestras o una muestra por cada 5m^2</span>
+    <span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">df2</span><span class="p">[</span><span class="s1">&#39;frec&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">freq</span>
+    <span class="c1"># Como se entiende mas facil por pixeles escalmos las frecuencias a 256, donde 256 significa que se muestrea pixel a pixel</span>
+    <span class="c1"># 128 Significaria que semuestrea cada 2 pixeles, 64 cada 4 pixeles... y 0 seria una sola muestra</span>
+    <span class="n">df2</span><span class="p">[</span><span class="s1">&#39;frec&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df2</span><span class="p">[</span><span class="s1">&#39;frec&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">256</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">df2</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">real</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">real</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1"># Tomamos unicamente la componente real no usamos la imaginaria</span>
+    <span class="n">df2</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;frec&#39;</span><span class="p">])</span>
+    <span class="n">df2</span> <span class="o">=</span> <span class="n">df2</span><span class="p">[</span><span class="n">df2</span><span class="p">[</span><span class="s1">&#39;frec&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span>
+    <span class="n">frecus</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">i</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">x</span><span class="p">:</span><span class="n">y</span><span class="p">]</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">])</span>
+        <span class="n">frecus</span> <span class="o">=</span> <span class="n">frecus</span> <span class="o">+</span> <span class="n">temp</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">4</span><span class="p">)[</span><span class="s1">&#39;frec&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">dictemp</span><span class="p">[(</span><span class="s1">&#39;frecbean&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;pow&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">))]</span> <span class="o">=</span> <span class="n">frecus</span><span class="p">[</span><span class="n">l</span><span class="p">]</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="n">l</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="c1"># Ahora vamos a estimar un uspectrograma reducido a 32 beans</span>
+    <span class="c1"># es decir frecuencia de muestreo enrangos que van aumentando de a 8 pixeles y sacamos sa sumatoria en cada bean</span>
+    <span class="n">frecbeans</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">32</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">32</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">i</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">x</span><span class="p">:</span><span class="n">y</span><span class="p">]</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">real</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">frecbeans</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frecbeans</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">dictemp</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">frecbeans</span><span class="p">[</span><span class="n">l</span><span class="p">]</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">l</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">dictemp</span></div>
+
+
+
+<div class="viewcode-block" id="getTextureFeatures"><a class="viewcode-back" href="../../code.html#core.image_procesing_functions.getTextureFeatures">[docs]</a><span class="k">def</span> <span class="nf">getTextureFeatures</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">imgSize</span><span class="p">,</span> <span class="n">no_points</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">hlen</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Build LBP histogram for give image resampled aath imgSize</span>
+
+<span class="sd">    :param im: 256x256 RGB image readed with ocv</span>
+
+<span class="sd">    :param imgSize: new ssize for resampling image</span>
+
+<span class="sd">    :param no_points: parameter or LBP</span>
+<span class="sd">    :type no_points: int</span>
+
+<span class="sd">    :param radius: paremeter of LBP</span>
+
+<span class="sd">    :param hlen: len of histogram</span>
+
+<span class="sd">    :return: lbp histogram</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="p">(</span><span class="n">imgSize</span><span class="p">,</span> <span class="n">imgSize</span><span class="p">),</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+    <span class="n">imgColor</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">norm_type</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">NORM_MINMAX</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">CV_32F</span><span class="p">)</span>
+    <span class="n">imgGray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">imgColor</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+    <span class="c1"># Se utiliza el algorithmo local binary patterns con el metodo unicorme</span>
+    <span class="n">lbp</span> <span class="o">=</span> <span class="n">local_binary_pattern</span><span class="p">(</span><span class="n">imgGray</span><span class="p">,</span> <span class="n">no_points</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;uniform&#39;</span><span class="p">)</span>
+    <span class="c1"># Calculate the histogram</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">lbp</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">hist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># itemfreq(lbp.ravel())</span>
+    <span class="c1"># Normalize the histogram</span>
+    <span class="n">histB</span> <span class="o">=</span> <span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[:]</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">[:]))</span>
+    <span class="c1"># Se asegura una longitud del histograma</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">histB</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="n">hlen</span><span class="p">:</span>
+        <span class="n">histBv</span> <span class="o">=</span> <span class="p">(</span><span class="n">histB</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">a</span> <span class="o">-</span> <span class="n">hlen</span><span class="p">:],</span> <span class="n">histB</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">a</span> <span class="o">-</span> <span class="n">hlen</span><span class="p">:])</span>
+    <span class="k">elif</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="n">hlen</span><span class="p">:</span>
+        <span class="n">histBv</span> <span class="o">=</span> <span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">hlen</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="n">hlen</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># print(&#39;ok&#39;)</span>
+        <span class="n">histBv</span> <span class="o">=</span> <span class="n">histB</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">histBv</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_lbp_descriptors"><a class="viewcode-back" href="../../code.html#core.image_procesing_functions.get_lbp_descriptors">[docs]</a><span class="k">def</span> <span class="nf">get_lbp_descriptors</span><span class="p">(</span><span class="n">im</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Build 2 Local Binary Patter histogram for give image one in 68 pixel resample and other in 6 pix resample</span>
+
+<span class="sd">    :param im: 256x256 RGB image readed with ocv</span>
+
+<span class="sd">    :return: 2 lbp histograms for resampling image at 68X68 and 6X6 pixels</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dictemp</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">imgSize</span> <span class="o">=</span> <span class="mi">68</span>
+    <span class="n">radius</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">no_points</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">radius</span>
+    <span class="n">hlen</span> <span class="o">=</span> <span class="n">no_points</span> <span class="o">+</span> <span class="n">radius</span>
+    <span class="n">hist68</span> <span class="o">=</span> <span class="n">getTextureFeatures</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">imgSize</span><span class="p">,</span> <span class="n">no_points</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">hlen</span><span class="p">)</span>
+    <span class="c1"># luego baja</span>
+    <span class="n">imgSize</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">radius</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">no_points</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">radius</span>
+    <span class="n">hlen</span> <span class="o">=</span> <span class="n">no_points</span> <span class="o">+</span> <span class="n">radius</span>
+    <span class="n">hist6</span> <span class="o">=</span> <span class="n">getTextureFeatures</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">imgSize</span><span class="p">,</span> <span class="n">no_points</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">hlen</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>  <span class="c1"># Se encontro que las texturas entre deforestacion y no deforestacion cambian mas en 68 y6 pix</span>
+        <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;textur6_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">hist6</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">18</span><span class="p">):</span>  <span class="c1"># Se encontro que las texturas entre deforestacion y no deforestacion cambian mas en 68 y6 pix</span>
+        <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;textur68_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">hist68</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">dictemp</span></div>
+
+<div class="viewcode-block" id="get_orb_descriptors"><a class="viewcode-back" href="../../code.html#core.image_procesing_functions.get_orb_descriptors">[docs]</a><span class="k">def</span> <span class="nf">get_orb_descriptors</span><span class="p">(</span><span class="n">im</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gets descriptor usinr ORB algorithem from CSV</span>
+
+<span class="sd">    :param im:</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dictemp</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">orb</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">ORB_create</span><span class="p">()</span>
+    <span class="n">im0</span> <span class="o">=</span> <span class="n">remove_transparency</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">kp</span><span class="p">,</span> <span class="n">des</span> <span class="o">=</span> <span class="n">orb</span><span class="o">.</span><span class="n">detectAndCompute</span><span class="p">(</span><span class="n">im0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;orbKp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kp</span>
+    <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;orbDes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">des</span>
+
+    <span class="k">return</span> <span class="n">dictemp</span></div>
+
+
+
+
+
+<div class="viewcode-block" id="png2GeoTif"><a class="viewcode-back" href="../../code.html#core.image_procesing_functions.png2GeoTif">[docs]</a><span class="k">def</span> <span class="nf">png2GeoTif</span><span class="p">(</span><span class="n">src_filename</span><span class="p">,</span><span class="n">dst_filename</span><span class="p">,</span><span class="n">google_x</span><span class="p">,</span><span class="n">google_y</span><span class="p">,</span><span class="n">zoom</span><span class="p">,</span><span class="n">pixels</span><span class="p">,</span><span class="n">epsg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function make image georeference adn convert to .tif format to be able to load it in qgis</span>
+
+<span class="sd">    :param src_filename: &#39;/path/to/source.tif&#39;</span>
+
+<span class="sd">    :param dst_filename: &#39;/path/to/destination.tif&#39;</span>
+
+<span class="sd">    :param google_x:</span>
+
+<span class="sd">    :param google_y:</span>
+
+<span class="sd">    :param zoom: 15</span>
+
+<span class="sd">    :param pixels:</span>
+
+<span class="sd">    :param epsg: 4326 #Es el eps de los puntos del IDEAM y el que retorna pygeotile</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Opens source dataset</span>
+    <span class="n">src_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">src_filename</span><span class="p">)</span>
+    <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;GTiff&quot;</span>
+    <span class="n">driver</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="nb">format</span><span class="p">)</span>
+    <span class="c1"># Open destination dataset</span>
+    <span class="n">dst_ds</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">CreateCopy</span><span class="p">(</span><span class="n">dst_filename</span><span class="p">,</span> <span class="n">src_ds</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="c1">#Optener los puntos de referencia</span>
+    <span class="n">tile</span> <span class="o">=</span> <span class="n">Tile</span><span class="o">.</span><span class="n">from_google</span><span class="p">(</span><span class="n">google_x</span><span class="p">,</span> <span class="n">google_y</span><span class="p">,</span> <span class="n">zoom</span><span class="p">)</span>
+    <span class="n">bounds</span> <span class="o">=</span> <span class="n">tile</span><span class="o">.</span><span class="n">bounds</span> <span class="c1">#Retorna el punto sur occidental y el punto nororiental del tile.</span>
+    <span class="n">p1</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Point(latitude=2.6357885741666065, longitude=-72.388916015625)</span>
+    <span class="n">p2</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">uperleftx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">uperlefty</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">scalex</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">p2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">pixels</span>
+    <span class="n">scaley</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">pixels</span>
+    <span class="c1"># Specify raster location through geotransform array</span>
+    <span class="c1"># (uperleftx, scalex, skewx, uperlefty, skewy, scaley)</span>
+    <span class="c1"># Scale = size of one pixel in units of raster projection</span>
+    <span class="c1"># this example below assumes 100x100</span>
+    <span class="n">gt</span> <span class="o">=</span> <span class="p">[</span><span class="n">uperleftx</span><span class="p">,</span> <span class="n">scalex</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">uperlefty</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">scaley</span><span class="p">]</span>
+    <span class="c1">#print(gt)</span>
+    <span class="c1"># Set location</span>
+    <span class="n">dst_ds</span><span class="o">.</span><span class="n">SetGeoTransform</span><span class="p">(</span><span class="n">gt</span><span class="p">)</span>
+    <span class="c1"># Get raster projection</span>
+    <span class="n">srs</span> <span class="o">=</span> <span class="n">osr</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">()</span>
+    <span class="n">srs</span><span class="o">.</span><span class="n">ImportFromEPSG</span><span class="p">(</span><span class="n">epsg</span><span class="p">)</span>
+    <span class="n">dest_wkt</span> <span class="o">=</span> <span class="n">srs</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">()</span>
+    <span class="c1"># Set projection</span>
+    <span class="n">dst_ds</span><span class="o">.</span><span class="n">SetProjection</span><span class="p">(</span><span class="n">dest_wkt</span><span class="p">)</span>
+    <span class="c1"># Close files</span>
+    <span class="n">dst_ds</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">src_ds</span> <span class="o">=</span> <span class="kc">None</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DefPointValidator 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, ga.becerra10, hc.torres , my.castro10, rj.santacruz @uniandes.edu.co;   ggalindo@ideam.gov.co.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>

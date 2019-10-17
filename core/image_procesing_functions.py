@@ -44,7 +44,14 @@ except:
 from osgeo import gdal, osr
 
 def window(seq, n=2):
-    "Returns a sliding window (of width n) over data from the iterable"
+    """Returns a sliding window (of width n) over data from the iterable
+
+    :param seq: secuentia list or vector
+
+    :param n: windows size
+
+    :return: iterable of windows
+    """
     "   s -> (s0,s1,...s[n-1]), (s1,s2,...,sn), ...                   "
     it = iter(seq)
     result = tuple(islice(it, n))
@@ -55,11 +62,25 @@ def window(seq, n=2):
         yield result
 
 def count_maxima(l):
+    """find local maximus in a one dimentional vector
+
+    :param l: one dimentional vector
+
+    :return: the count of local maxima finded
+    """
     # b, the middle value, is larger than both a and c
     return sum(a < b > c for a, b, c in window(l, 3))
 
 
 def remove_transparency(source, background_color):
+    """remove 4th layer of .png images
+
+    :param source:
+
+    :param background_color: layer ypu want to remove
+
+    :return: RGB image.
+    """
     source_img = cv2.cvtColor(source[:,:,:3], cv2.COLOR_BGR2GRAY)
     source_mask = source[:,:,3]  * (1 / 255.0)
 
@@ -71,10 +92,13 @@ def remove_transparency(source, background_color):
     return np.uint8(cv2.addWeighted(bg_part, 255.0, source_part, 255.0, 0.0))
 
 def getBorderFeatures(img,nim):
-    """
-    genear descriptores basados en bordes
-    No de lineas rectas, cantidad de bordes
-    img es una imagen png 256x256 cargada con cv2
+    """genear descriptores basados en bordes No de lineas rectas, cantidad de bordes img es una imagen png 256x256 cargada con cv2
+
+    :param img: 256x256 RGB intensity normalice image readed with OCV
+
+    :param nim: image flattern in a one dimention vecto
+
+    :return: dictionary with some border features: number of lines, numbre of border pixels in image
     """
     # primero para la imagen si reducir
 
@@ -142,7 +166,14 @@ def getBorderFeatures(img,nim):
             'curtosisImagenBinarizada': curtosisImagenBinarizada, 'sumaUmbral': sumaUmbral}
 
 def getBasicFeatures(nim,fltim):
-    """Calculates basic statistical descriptor or features """
+    """Calculates basic statistical descriptor or features
+
+    :param nim:  256x256 RGB intensity normaliced image readed with OCV
+
+    :param fltim: image flattern in a one dimention vecto
+
+    :return: dictionary with some basic descritive staticstis
+    """
     hist_grayim = np.histogram(fltim, bins=32)[0]
     dictemp = {}
 
@@ -177,7 +208,12 @@ def getBasicFeatures(nim,fltim):
 
 
 def get_color_histogram(nim):
-    """Calculates a histogram of colors in 3x3x3 color combinations """
+    """Calculates a histogram of colors in 3x3x3 color combinations over min-max normaliced image as a resumed color descriptor
+
+    :param nim: 256x256 RGB intensity normalice image readed with OCV
+
+    :return: 3X3 RGB histogram
+    """
     # Aqui se optinen el histogramade colores
     hist = cv2.calcHist([nim], [0, 1, 2], None, [3, 3, 3], [0, 256, 0, 256, 0, 256])
     hist = hist.flatten()
@@ -194,7 +230,13 @@ def get_color_histogram(nim):
 
 
 def get_ftt_descriptors(fltim):
-    """"Calculates FFT2 transfor of image flattered and construct related resum descriptors """
+    """Calculates FFT2 transfor of image flattered and construct related resum descriptors
+
+    :param fltim: image flattern in a one dimention vector
+
+    :return: dictionary with 32 bean sumiriced FTT and some main FTT componet for ebery bean.
+
+    """
     dictemp={}
     df2 = pd.DataFrame()
     nn = fltim.shape[-1]
@@ -244,7 +286,21 @@ def get_ftt_descriptors(fltim):
 
 
 def getTextureFeatures(im, imgSize, no_points, radius, hlen):
-    """Build LBP histogram for give image resampled aath imgSize"""
+    """Build LBP histogram for give image resampled aath imgSize
+
+    :param im: 256x256 RGB image readed with ocv
+
+    :param imgSize: new ssize for resampling image
+
+    :param no_points: parameter or LBP
+    :type no_points: int
+
+    :param radius: paremeter of LBP
+
+    :param hlen: len of histogram
+
+    :return: lbp histogram
+    """
     img = cv2.resize(im, (imgSize, imgSize), interpolation=cv2.INTER_AREA)
     imgColor = cv2.normalize(img, None, alpha=0, beta=256, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
     imgGray = cv2.cvtColor(imgColor, cv2.COLOR_BGR2GRAY)
@@ -267,7 +323,12 @@ def getTextureFeatures(im, imgSize, no_points, radius, hlen):
     return (histBv)
 
 def get_lbp_descriptors(im):
-    """Build 2 Local Binary Patter histogram for give image one in 68 pixel resmple and other in 6 pix resample"""
+    """Build 2 Local Binary Patter histogram for give image one in 68 pixel resample and other in 6 pix resample
+
+    :param im: 256x256 RGB image readed with ocv
+
+    :return: 2 lbp histograms for resampling image at 68X68 and 6X6 pixels
+    """
     dictemp = {}
     imgSize = 68
     radius = 2
@@ -289,6 +350,12 @@ def get_lbp_descriptors(im):
     return dictemp
 
 def get_orb_descriptors(im):
+    """Gets descriptor usinr ORB algorithem from CSV
+
+    :param im:
+
+    :return:
+    """
     dictemp = {}
     orb = cv2.ORB_create()
     im0 = remove_transparency(im, 0)
@@ -305,11 +372,22 @@ def get_orb_descriptors(im):
 def png2GeoTif(src_filename,dst_filename,google_x,google_y,zoom,pixels,epsg):
     """
     This function make image georeference adn convert to .tif format to be able to load it in qgis
-    src_filename ='/path/to/source.tif'
-    dst_filename = '/path/to/destination.tif'
-    google_x, google_y, zoom = 9795, 16143, 15  #Cordenadas del tile en la grilla google o planet que es igual
-    pixels=256 #Numero de pixels de un lado del cuadrado
-    epsg = 4326 #Es el eps de los puntos del IDEAM y el que retorna pygeotile
+
+    :param src_filename: '/path/to/source.tif'
+
+    :param dst_filename: '/path/to/destination.tif'
+
+    :param google_x:
+
+    :param google_y:
+
+    :param zoom: 15
+
+    :param pixels:
+
+    :param epsg: 4326 #Es el eps de los puntos del IDEAM y el que retorna pygeotile
+
+    :return:
     """
     # Opens source dataset
     src_ds = gdal.Open(src_filename)

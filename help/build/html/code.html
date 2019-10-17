@@ -1,0 +1,362 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Code documentation &#8212; DefPointValidator 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to DefPointValidator’s documentation!" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to DefPointValidator’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DefPointValidator 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="code-documentation">
+<h1>Code documentation<a class="headerlink" href="#code-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="main">
+<h2>Main<a class="headerlink" href="#main" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+<div class="section" id="backend-scripts">
+<h1>Backend Scripts<a class="headerlink" href="#backend-scripts" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-core.down_load_tiles">
+<span id="down-load-tiles"></span><h2>Down Load Tiles<a class="headerlink" href="#module-core.down_load_tiles" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="core.down_load_tiles.chipTiles">
+<code class="sig-prename descclassname">core.down_load_tiles.</code><code class="sig-name descname">chipTiles</code><span class="sig-paren">(</span><em class="sig-param">p</em>, <em class="sig-param">z</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/down_load_tiles.html#chipTiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.down_load_tiles.chipTiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>find Planet Tile for a give point p at given zool level z
+:param p: (lat, long)
+:param z: 15
+:return: x,y,z tile google xyz tile grid</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.down_load_tiles.getTile">
+<code class="sig-prename descclassname">core.down_load_tiles.</code><code class="sig-name descname">getTile</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/down_load_tiles.html#getTile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.down_load_tiles.getTile" title="Permalink to this definition">¶</a></dt>
+<dd><p>download tile from planet
+:param self:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.down_load_tiles.setTiles">
+<code class="sig-prename descclassname">core.down_load_tiles.</code><code class="sig-name descname">setTiles</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/down_load_tiles.html#setTiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.down_load_tiles.setTiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>find google tiles for every point and add atribute to vectorfile
+:param self:
+:return:</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-core.image_procesing_functions">
+<span id="image-procesion-functions"></span><h2>Image Procesion Functions<a class="headerlink" href="#module-core.image_procesing_functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="core.image_procesing_functions.count_maxima">
+<code class="sig-prename descclassname">core.image_procesing_functions.</code><code class="sig-name descname">count_maxima</code><span class="sig-paren">(</span><em class="sig-param">l</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/image_procesing_functions.html#count_maxima"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.image_procesing_functions.count_maxima" title="Permalink to this definition">¶</a></dt>
+<dd><p>find local maximus in a one dimentional vector</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>l</strong> – one dimentional vector</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the count of local maxima finded</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.image_procesing_functions.getBasicFeatures">
+<code class="sig-prename descclassname">core.image_procesing_functions.</code><code class="sig-name descname">getBasicFeatures</code><span class="sig-paren">(</span><em class="sig-param">nim</em>, <em class="sig-param">fltim</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/image_procesing_functions.html#getBasicFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.image_procesing_functions.getBasicFeatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates basic statistical descriptor or features</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nim</strong> – 256x256 RGB intensity normaliced image readed with OCV</p></li>
+<li><p><strong>fltim</strong> – image flattern in a one dimention vecto</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary with some basic descritive staticstis</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.image_procesing_functions.getBorderFeatures">
+<code class="sig-prename descclassname">core.image_procesing_functions.</code><code class="sig-name descname">getBorderFeatures</code><span class="sig-paren">(</span><em class="sig-param">img</em>, <em class="sig-param">nim</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/image_procesing_functions.html#getBorderFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.image_procesing_functions.getBorderFeatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>genear descriptores basados en bordes No de lineas rectas, cantidad de bordes img es una imagen png 256x256 cargada con cv2</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> – 256x256 RGB intensity normalice image readed with OCV</p></li>
+<li><p><strong>nim</strong> – image flattern in a one dimention vecto</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary with some border features: number of lines, numbre of border pixels in image</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.image_procesing_functions.getTextureFeatures">
+<code class="sig-prename descclassname">core.image_procesing_functions.</code><code class="sig-name descname">getTextureFeatures</code><span class="sig-paren">(</span><em class="sig-param">im</em>, <em class="sig-param">imgSize</em>, <em class="sig-param">no_points</em>, <em class="sig-param">radius</em>, <em class="sig-param">hlen</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/image_procesing_functions.html#getTextureFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.image_procesing_functions.getTextureFeatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build LBP histogram for give image resampled aath imgSize</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>im</strong> – 256x256 RGB image readed with ocv</p></li>
+<li><p><strong>imgSize</strong> – new ssize for resampling image</p></li>
+<li><p><strong>no_points</strong> (<em>int</em>) – parameter or LBP</p></li>
+<li><p><strong>radius</strong> – paremeter of LBP</p></li>
+<li><p><strong>hlen</strong> – len of histogram</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>lbp histogram</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.image_procesing_functions.get_color_histogram">
+<code class="sig-prename descclassname">core.image_procesing_functions.</code><code class="sig-name descname">get_color_histogram</code><span class="sig-paren">(</span><em class="sig-param">nim</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/image_procesing_functions.html#get_color_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.image_procesing_functions.get_color_histogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates a histogram of colors in 3x3x3 color combinations over min-max normaliced image as a resumed color descriptor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>nim</strong> – 256x256 RGB intensity normalice image readed with OCV</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>3X3 RGB histogram</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.image_procesing_functions.get_ftt_descriptors">
+<code class="sig-prename descclassname">core.image_procesing_functions.</code><code class="sig-name descname">get_ftt_descriptors</code><span class="sig-paren">(</span><em class="sig-param">fltim</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/image_procesing_functions.html#get_ftt_descriptors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.image_procesing_functions.get_ftt_descriptors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates FFT2 transfor of image flattered and construct related resum descriptors</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fltim</strong> – image flattern in a one dimention vector</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary with 32 bean sumiriced FTT and some main FTT componet for ebery bean.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.image_procesing_functions.get_lbp_descriptors">
+<code class="sig-prename descclassname">core.image_procesing_functions.</code><code class="sig-name descname">get_lbp_descriptors</code><span class="sig-paren">(</span><em class="sig-param">im</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/image_procesing_functions.html#get_lbp_descriptors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.image_procesing_functions.get_lbp_descriptors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build 2 Local Binary Patter histogram for give image one in 68 pixel resample and other in 6 pix resample</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>im</strong> – 256x256 RGB image readed with ocv</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>2 lbp histograms for resampling image at 68X68 and 6X6 pixels</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.image_procesing_functions.get_orb_descriptors">
+<code class="sig-prename descclassname">core.image_procesing_functions.</code><code class="sig-name descname">get_orb_descriptors</code><span class="sig-paren">(</span><em class="sig-param">im</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/image_procesing_functions.html#get_orb_descriptors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.image_procesing_functions.get_orb_descriptors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets descriptor usinr ORB algorithem from CSV</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>im</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.image_procesing_functions.png2GeoTif">
+<code class="sig-prename descclassname">core.image_procesing_functions.</code><code class="sig-name descname">png2GeoTif</code><span class="sig-paren">(</span><em class="sig-param">src_filename</em>, <em class="sig-param">dst_filename</em>, <em class="sig-param">google_x</em>, <em class="sig-param">google_y</em>, <em class="sig-param">zoom</em>, <em class="sig-param">pixels</em>, <em class="sig-param">epsg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/image_procesing_functions.html#png2GeoTif"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.image_procesing_functions.png2GeoTif" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function make image georeference adn convert to .tif format to be able to load it in qgis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src_filename</strong> – ‘/path/to/source.tif’</p></li>
+<li><p><strong>dst_filename</strong> – ‘/path/to/destination.tif’</p></li>
+<li><p><strong>google_x</strong> – </p></li>
+<li><p><strong>google_y</strong> – </p></li>
+<li><p><strong>zoom</strong> – 15</p></li>
+<li><p><strong>pixels</strong> – </p></li>
+<li><p><strong>epsg</strong> – 4326 #Es el eps de los puntos del IDEAM y el que retorna pygeotile</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.image_procesing_functions.remove_transparency">
+<code class="sig-prename descclassname">core.image_procesing_functions.</code><code class="sig-name descname">remove_transparency</code><span class="sig-paren">(</span><em class="sig-param">source</em>, <em class="sig-param">background_color</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/image_procesing_functions.html#remove_transparency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.image_procesing_functions.remove_transparency" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove 4th layer of .png images</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> – </p></li>
+<li><p><strong>background_color</strong> – layer ypu want to remove</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>RGB image.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.image_procesing_functions.window">
+<code class="sig-prename descclassname">core.image_procesing_functions.</code><code class="sig-name descname">window</code><span class="sig-paren">(</span><em class="sig-param">seq</em>, <em class="sig-param">n=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/image_procesing_functions.html#window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.image_procesing_functions.window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a sliding window (of width n) over data from the iterable</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seq</strong> – secuentia list or vector</p></li>
+<li><p><strong>n</strong> – windows size</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>iterable of windows</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-core.tile_preprocess">
+<span id="tile-pre-process"></span><h2>Tile Pre Process<a class="headerlink" href="#module-core.tile_preprocess" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="core.tile_preprocess.aply_clasification_model">
+<code class="sig-prename descclassname">core.tile_preprocess.</code><code class="sig-name descname">aply_clasification_model</code><span class="sig-paren">(</span><em class="sig-param">dic_change</em>, <em class="sig-param">model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tile_preprocess.html#aply_clasification_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.tile_preprocess.aply_clasification_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>dic_imagen= diccionario con descriptores de cambio entre las imagenes
+modelo: modleo sklearn persistido como objeto python3 con la libreria joblib</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.tile_preprocess.aply_regresion_model">
+<code class="sig-prename descclassname">core.tile_preprocess.</code><code class="sig-name descname">aply_regresion_model</code><span class="sig-paren">(</span><em class="sig-param">dic_image</em>, <em class="sig-param">model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tile_preprocess.html#aply_regresion_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.tile_preprocess.aply_regresion_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>dic_imagen= diccionario con los descriptorsde la imagen
+modelo: modleo sklearn persistido como objeto python3 con la libreria joblib</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.tile_preprocess.getCoupleVectors">
+<code class="sig-prename descclassname">core.tile_preprocess.</code><code class="sig-name descname">getCoupleVectors</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">umbralTamano</em>, <em class="sig-param">umbralVisibilidad</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tile_preprocess.html#getCoupleVectors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.tile_preprocess.getCoupleVectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>get descriptor vector for befor and after images and for change</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.tile_preprocess.getFeatureVector">
+<code class="sig-prename descclassname">core.tile_preprocess.</code><code class="sig-name descname">getFeatureVector</code><span class="sig-paren">(</span><em class="sig-param">fileName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tile_preprocess.html#getFeatureVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.tile_preprocess.getFeatureVector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a feature vector dictionary for given image</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.tile_preprocess.openRaster">
+<code class="sig-prename descclassname">core.tile_preprocess.</code><code class="sig-name descname">openRaster</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">path</em>, <em class="sig-param">pre</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tile_preprocess.html#openRaster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.tile_preprocess.openRaster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open vector from file</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Code documentation</a><ul>
+<li><a class="reference internal" href="#main">Main</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#backend-scripts">Backend Scripts</a><ul>
+<li><a class="reference internal" href="#module-core.down_load_tiles">Down Load Tiles</a></li>
+<li><a class="reference internal" href="#module-core.image_procesing_functions">Image Procesion Functions</a></li>
+<li><a class="reference internal" href="#module-core.tile_preprocess">Tile Pre Process</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to DefPointValidator’s documentation!</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/code.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to DefPointValidator’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DefPointValidator 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, ga.becerra10, hc.torres , my.castro10, rj.santacruz @uniandes.edu.co;   ggalindo@ideam.gov.co.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>

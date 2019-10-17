@@ -1,0 +1,435 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>core.tile_preprocess &#8212; DefPointValidator 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DefPointValidator 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for core.tile_preprocess</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># OS and file sistem Libraries</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">qgis.PyQt.QtCore</span> <span class="k">import</span> <span class="n">QVariant</span>
+<span class="kn">from</span> <span class="nn">qgis.core</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">qgis.PyQt.QtCore</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">qgis.PyQt.QtGui</span> <span class="k">import</span> <span class="o">*</span>
+
+
+<span class="c1"># Images and computer vision Libraries</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">cv2</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;opencv-python&#39;</span><span class="p">])</span>
+<span class="c1">#Math ans statistics</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;numpy&#39;</span><span class="p">])</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;pandas&#39;</span><span class="p">])</span>
+<span class="c1">#library for load and save python object including models</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">dump</span><span class="p">,</span> <span class="n">load</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;joblib&#39;</span><span class="p">])</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">sklearn</span>
+    <span class="n">a</span><span class="o">=</span><span class="n">sklearn</span><span class="o">.</span><span class="n">__version__</span>
+    <span class="k">if</span> <span class="n">a</span><span class="o">==</span><span class="s1">&#39;0.20.1&#39;</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">ensemble</span>
+        <span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">datasets</span>
+        <span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="k">import</span> <span class="n">shuffle</span>
+        <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">explained_variance_score</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;uninstall&#39;</span><span class="p">,</span> <span class="s1">&#39;scikit-learn&#39;</span><span class="p">,</span><span class="s1">&#39;-y&#39;</span><span class="p">])</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;scikit-learn==0.20.1&#39;</span><span class="p">])</span>
+        <span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">ensemble</span>
+        <span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">datasets</span>
+        <span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="k">import</span> <span class="n">shuffle</span>
+        <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">explained_variance_score</span>
+
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;scikit-learn==0.20.1&#39;</span><span class="p">])</span>
+
+<span class="c1"># Custum build functions</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">image_procesing_functions</span>
+
+<span class="c1">#Codigo para cargar lista de puntos</span>
+
+<div class="viewcode-block" id="getFeatureVector"><a class="viewcode-back" href="../../code.html#core.tile_preprocess.getFeatureVector">[docs]</a><span class="k">def</span> <span class="nf">getFeatureVector</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Build a feature vector dictionary for given image &quot;&quot;&quot;</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+    <span class="n">nim</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">norm_type</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">NORM_MINMAX</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">CV_32F</span><span class="p">)</span>
+    <span class="n">grayim</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">nim</span><span class="p">,</span><span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>  <span class="c1"># Pasamos a escala de grises ya qu nos intersan las texturas y objetos no colores</span>
+    <span class="n">fltim</span> <span class="o">=</span> <span class="n">grayim</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>  <span class="c1"># Convertimos la imagenes de matriz a una serie</span>
+
+    <span class="c1"># Building descriptors dictionary</span>
+    <span class="n">dic</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># Basic statistical descriptors.</span>
+    <span class="n">dic</span><span class="p">[</span><span class="s1">&#39;imgSize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+    <span class="n">basics</span> <span class="o">=</span> <span class="n">image_procesing_functions</span><span class="o">.</span><span class="n">getBasicFeatures</span><span class="p">(</span><span class="n">nim</span><span class="p">,</span><span class="n">fltim</span> <span class="p">)</span>
+    <span class="n">dic</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">dic</span><span class="p">,</span> <span class="o">**</span><span class="n">basics</span><span class="p">}</span>
+
+    <span class="c1"># Border descriptors</span>
+    <span class="n">bordes</span> <span class="o">=</span> <span class="n">image_procesing_functions</span><span class="o">.</span><span class="n">getBorderFeatures</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="n">nim</span><span class="p">)</span>
+    <span class="n">dic</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">dic</span><span class="p">,</span> <span class="o">**</span><span class="n">bordes</span><span class="p">}</span>
+
+    <span class="c1">#Color histogram descriptors</span>
+    <span class="n">colorHistogram</span> <span class="o">=</span> <span class="n">image_procesing_functions</span><span class="o">.</span><span class="n">get_color_histogram</span><span class="p">(</span><span class="n">nim</span><span class="p">)</span>
+    <span class="n">dic</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">dic</span><span class="p">,</span> <span class="o">**</span><span class="n">colorHistogram</span><span class="p">}</span>
+
+    <span class="c1">#FFT descriptors</span>
+
+    <span class="n">fftDescriptors</span> <span class="o">=</span> <span class="n">image_procesing_functions</span><span class="o">.</span><span class="n">get_ftt_descriptors</span><span class="p">(</span><span class="n">fltim</span><span class="p">)</span>
+    <span class="n">dic</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">dic</span><span class="p">,</span> <span class="o">**</span><span class="n">fftDescriptors</span><span class="p">}</span>
+
+    <span class="c1">#Texture descriptors Local Binary pattern (LBP)</span>
+
+    <span class="n">lbpDescriptors</span> <span class="o">=</span> <span class="n">image_procesing_functions</span><span class="o">.</span><span class="n">get_lbp_descriptors</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+    <span class="n">dic</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">dic</span><span class="p">,</span> <span class="o">**</span><span class="n">lbpDescriptors</span><span class="p">}</span>
+
+    <span class="c1">#Geometric feature descriptos (croners) ORB</span>
+    <span class="n">orbDescriptors</span> <span class="o">=</span> <span class="n">image_procesing_functions</span><span class="o">.</span><span class="n">get_orb_descriptors</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+    <span class="n">dic</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">dic</span><span class="p">,</span> <span class="o">**</span><span class="n">orbDescriptors</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">dic</span></div>
+
+<div class="viewcode-block" id="getCoupleVectors"><a class="viewcode-back" href="../../code.html#core.tile_preprocess.getCoupleVectors">[docs]</a><span class="k">def</span> <span class="nf">getCoupleVectors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">umbralTamano</span><span class="p">,</span> <span class="n">umbralVisibilidad</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;get descriptor vector for befor and after images and for change&quot;&quot;&quot;</span>
+
+
+    <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">getFeatures</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">startEditing</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">fieldNameIndex</span><span class="p">(</span><span class="s2">&quot;descriptorsB&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">addAttributes</span><span class="p">([</span><span class="n">QgsField</span><span class="p">(</span><span class="s2">&quot;descriptorsB&quot;</span><span class="p">,</span> <span class="n">QVariant</span><span class="o">.</span><span class="n">String</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">addAttributes</span><span class="p">([</span><span class="n">QgsField</span><span class="p">(</span><span class="s2">&quot;descriptorsA&quot;</span><span class="p">,</span> <span class="n">QVariant</span><span class="o">.</span><span class="n">String</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">addAttributes</span><span class="p">([</span><span class="n">QgsField</span><span class="p">(</span><span class="s2">&quot;deforest&quot;</span><span class="p">,</span> <span class="n">QVariant</span><span class="o">.</span><span class="n">Int</span><span class="p">)])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">updateFields</span><span class="p">()</span>
+
+    <span class="n">id_new_col_descriptorsB</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">fieldNameIndex</span><span class="p">(</span><span class="s2">&quot;descriptorsB&quot;</span><span class="p">)</span>
+    <span class="n">id_new_col_descriptorsA</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">fieldNameIndex</span><span class="p">(</span><span class="s2">&quot;descriptorsA&quot;</span><span class="p">)</span>
+    <span class="n">id_new_col_descriptorsD</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">fieldNameIndex</span><span class="p">(</span><span class="s2">&quot;deforest&quot;</span><span class="p">)</span>
+
+    <span class="n">total</span><span class="o">=</span><span class="mi">0</span>
+    <span class="n">existed</span><span class="o">=</span><span class="mi">0</span>
+    <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">:</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="n">total</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">pathB</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outRaster</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;tile_B&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span>
+        <span class="n">pathA</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outRaster</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;tile_A&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_descriptorsB</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_descriptorsA</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_descriptorsD</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pathB</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pathA</span><span class="p">):</span>  <span class="c1"># Check if images exist</span>
+            <span class="n">existed</span> <span class="o">=</span> <span class="n">existed</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">pathB</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">pathA</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_descriptorsB</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_descriptorsA</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_descriptorsD</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="n">umbralTamano</span> <span class="ow">and</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="n">umbralTamano</span><span class="p">:</span>
+
+                <span class="n">dicB</span> <span class="o">=</span> <span class="n">getFeatureVector</span><span class="p">(</span><span class="n">pathB</span><span class="p">)</span>
+                <span class="n">dicA</span> <span class="o">=</span> <span class="n">getFeatureVector</span><span class="p">(</span><span class="n">pathA</span><span class="p">)</span>
+                <span class="c1">#dicB0 = dicB</span>
+                <span class="c1">#dicA0 = dicA</span>
+
+
+                <span class="n">Vb</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">aply_regresion_model</span><span class="p">(</span><span class="n">dicB</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path2model_visibilidad</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+
+                <span class="n">Bb</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">aply_regresion_model</span><span class="p">(</span><span class="n">dicB</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path2model_boscosidad</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">dicB</span><span class="p">[</span><span class="s1">&#39;boscosidad&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Bb</span>
+                <span class="n">dicB</span><span class="p">[</span><span class="s1">&#39;visibilidad&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Vb</span>
+
+                <span class="n">Va</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">aply_regresion_model</span><span class="p">(</span><span class="n">dicA</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path2model_visibilidad</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+
+                <span class="n">Ba</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">aply_regresion_model</span><span class="p">(</span><span class="n">dicA</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path2model_boscosidad</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">dicA</span><span class="p">[</span><span class="s1">&#39;boscosidad&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ba</span>
+                <span class="n">dicA</span><span class="p">[</span><span class="s1">&#39;visibilidad&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Va</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_descriptorsB</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_descriptorsA</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_descriptorsD</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">Va</span> <span class="o">&gt;</span> <span class="n">umbralVisibilidad</span> <span class="ow">and</span> <span class="n">Vb</span> <span class="o">&gt;</span> <span class="n">umbralVisibilidad</span><span class="p">:</span>
+
+                    <span class="c1">#Search for orb feature matching</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">bf</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">BFMatcher</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">NORM_HAMMING</span><span class="p">,</span> <span class="n">crossCheck</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="c1"># Match descriptors.</span>
+                        <span class="n">matches</span> <span class="o">=</span> <span class="n">bf</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">dicB</span><span class="p">[</span><span class="s1">&#39;orbDes&#39;</span><span class="p">],</span> <span class="n">dicA</span><span class="p">[</span><span class="s1">&#39;orbDes&#39;</span><span class="p">])</span>
+                        <span class="n">good</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="n">tempvar</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">tempvar</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="n">good</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">distance</span> <span class="o">&lt;</span> <span class="mi">63</span><span class="p">:</span>
+                            <span class="n">good</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">m</span><span class="o">.</span><span class="n">distance</span><span class="p">])</span>
+
+                    <span class="c1"># Optain de diference or change in every descriptor</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">dicB</span><span class="p">,</span> <span class="n">dicA</span><span class="p">])</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;orbKp&#39;</span><span class="p">,</span> <span class="s1">&#39;orbDes&#39;</span><span class="p">])</span>
+                    <span class="n">dif</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                    <span class="n">zipbObj</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">dif</span><span class="p">)</span>
+                    <span class="n">dic</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">zipbObj</span><span class="p">)</span>
+                    <span class="n">dic</span><span class="p">[</span><span class="s1">&#39;orbMatch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span>
+                    <span class="n">dic</span><span class="p">[</span><span class="s1">&#39;orbMatchThreshold&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">good</span><span class="p">)</span>
+                    <span class="c1">#Now we have new change descriptor dictionari including orb matching geatures</span>
+
+                    <span class="n">forestChange</span> <span class="o">=</span> <span class="n">aply_clasification_model</span><span class="p">(</span><span class="n">dic</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path2model_deforest</span><span class="p">)</span>
+
+                    <span class="n">B</span> <span class="o">=</span> <span class="s1">&#39;Bosocosidad: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dicB</span><span class="p">[</span><span class="s1">&#39;boscosidad&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;, Visibilidad: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dicB</span><span class="p">[</span><span class="s1">&#39;visibilidad&#39;</span><span class="p">])</span>
+                    <span class="n">A</span> <span class="o">=</span> <span class="s1">&#39;Bosocosidad: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dicA</span><span class="p">[</span><span class="s1">&#39;boscosidad&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;, Visibilidad: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dicA</span><span class="p">[</span><span class="s1">&#39;visibilidad&#39;</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_descriptorsB</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_descriptorsA</span><span class="p">,</span>
+                                                       <span class="n">A</span><span class="p">)</span>  <span class="c1"># json.dumps(str(dicA[&#39;boscosidad&#39;])))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_descriptorsD</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">forestChange</span><span class="p">))</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">commitChanges</span><span class="p">()</span></div>
+
+<span class="c1"># Funcion para asignar punta de calidad (visibilidad) de 0 a 100%.</span>
+<div class="viewcode-block" id="aply_regresion_model"><a class="viewcode-back" href="../../code.html#core.tile_preprocess.aply_regresion_model">[docs]</a><span class="k">def</span> <span class="nf">aply_regresion_model</span><span class="p">(</span><span class="n">dic_image</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    dic_imagen= diccionario con los descriptorsde la imagen</span>
+<span class="sd">    modelo: modleo sklearn persistido como objeto python3 con la libreria joblib</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">feature_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">,</span> <span class="s1">&#39;11&#39;</span><span class="p">,</span> <span class="s1">&#39;12&#39;</span><span class="p">,</span> <span class="s1">&#39;13&#39;</span><span class="p">,</span> <span class="s1">&#39;14&#39;</span><span class="p">,</span> <span class="s1">&#39;15&#39;</span><span class="p">,</span> <span class="s1">&#39;16&#39;</span><span class="p">,</span> <span class="s1">&#39;17&#39;</span><span class="p">,</span> <span class="s1">&#39;18&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;19&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;20&#39;</span><span class="p">,</span> <span class="s1">&#39;21&#39;</span><span class="p">,</span> <span class="s1">&#39;22&#39;</span><span class="p">,</span> <span class="s1">&#39;23&#39;</span><span class="p">,</span> <span class="s1">&#39;24&#39;</span><span class="p">,</span> <span class="s1">&#39;25&#39;</span><span class="p">,</span> <span class="s1">&#39;26&#39;</span><span class="p">,</span> <span class="s1">&#39;27&#39;</span><span class="p">,</span> <span class="s1">&#39;28&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;29&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="s1">&#39;30&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">,</span> <span class="s1">&#39;7&#39;</span><span class="p">,</span> <span class="s1">&#39;8&#39;</span><span class="p">,</span> <span class="s1">&#39;9&#39;</span><span class="p">,</span> <span class="s1">&#39;avBlue&#39;</span><span class="p">,</span> <span class="s1">&#39;avGreen&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;avRed&#39;</span><span class="p">,</span> <span class="s1">&#39;avWhite&#39;</span><span class="p">,</span> <span class="s1">&#39;bordes&#39;</span><span class="p">,</span> <span class="s1">&#39;bordes32&#39;</span><span class="p">,</span> <span class="s1">&#39;curtWhite&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;curtosisImagenBinarizada&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean0pow0&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean0pow1&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;frecbean0pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean0pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean1pow0&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean1pow1&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;frecbean1pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean1pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean2pow0&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean2pow1&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;frecbean2pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean2pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean3pow0&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean3pow1&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;frecbean3pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean3pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean4pow0&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean4pow1&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;frecbean4pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean4pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean5pow0&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean5pow1&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;frecbean5pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean5pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean6pow0&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean6pow1&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;frecbean6pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean6pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean7pow0&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean7pow1&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;frecbean7pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean7pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;imgSize&#39;</span><span class="p">,</span> <span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="s1">&#39;lines32&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;maxBlue&#39;</span><span class="p">,</span> <span class="s1">&#39;maxGreen&#39;</span><span class="p">,</span> <span class="s1">&#39;maxRed&#39;</span><span class="p">,</span> <span class="s1">&#39;maxWhite&#39;</span><span class="p">,</span> <span class="s1">&#39;minBlue&#39;</span><span class="p">,</span> <span class="s1">&#39;minGreen&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;minRed&#39;</span><span class="p">,</span> <span class="s1">&#39;minWhite&#39;</span><span class="p">,</span> <span class="s1">&#39;num_piks_White&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g0b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g0b1&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;r0g0b2&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g1b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g1b1&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g1b2&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g2b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g2b1&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;r0g2b2&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g0b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g0b1&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g0b2&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g1b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g1b1&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;r1g1b2&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g2b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g2b1&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g2b2&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g0b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g0b1&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;r2g0b2&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g1b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g1b1&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g1b2&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g2b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g2b1&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;r2g2b2&#39;</span><span class="p">,</span> <span class="s1">&#39;simetriaImagenBinarizada&#39;</span><span class="p">,</span> <span class="s1">&#39;skewWhite&#39;</span><span class="p">,</span> <span class="s1">&#39;stdBlue&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;stdGreen&#39;</span><span class="p">,</span> <span class="s1">&#39;stdRed&#39;</span><span class="p">,</span> <span class="s1">&#39;stdWhite&#39;</span><span class="p">,</span> <span class="s1">&#39;sumaUmbral&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_0&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;textur68_1&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_10&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_11&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_12&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;textur68_13&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_14&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_15&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_16&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;textur68_17&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_2&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_3&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_4&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;textur68_5&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_6&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_7&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_8&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;textur68_9&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_0&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_1&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_2&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_3&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;textur6_4&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_5&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_6&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_7&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_8&#39;</span><span class="p">]</span>
+
+    <span class="n">diclist</span> <span class="o">=</span> <span class="p">[</span><span class="n">dic_image</span><span class="p">]</span>
+    <span class="n">dftemp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">diclist</span><span class="p">)</span>
+    <span class="n">vector_image</span> <span class="o">=</span> <span class="n">dftemp</span><span class="p">[</span><span class="n">feature_names</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="c1">#dftemp.values</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+        <span class="n">clf</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">vector_image</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="aply_clasification_model"><a class="viewcode-back" href="../../code.html#core.tile_preprocess.aply_clasification_model">[docs]</a><span class="k">def</span> <span class="nf">aply_clasification_model</span><span class="p">(</span><span class="n">dic_change</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    dic_imagen= diccionario con descriptores de cambio entre las imagenes</span>
+<span class="sd">    modelo: modleo sklearn persistido como objeto python3 con la libreria joblib</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">feature_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">,</span> <span class="s1">&#39;11&#39;</span><span class="p">,</span> <span class="s1">&#39;12&#39;</span><span class="p">,</span> <span class="s1">&#39;13&#39;</span><span class="p">,</span> <span class="s1">&#39;14&#39;</span><span class="p">,</span> <span class="s1">&#39;15&#39;</span><span class="p">,</span> <span class="s1">&#39;16&#39;</span><span class="p">,</span> <span class="s1">&#39;17&#39;</span><span class="p">,</span> <span class="s1">&#39;18&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;19&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;20&#39;</span><span class="p">,</span> <span class="s1">&#39;21&#39;</span><span class="p">,</span> <span class="s1">&#39;22&#39;</span><span class="p">,</span> <span class="s1">&#39;23&#39;</span><span class="p">,</span> <span class="s1">&#39;24&#39;</span><span class="p">,</span> <span class="s1">&#39;25&#39;</span><span class="p">,</span> <span class="s1">&#39;26&#39;</span><span class="p">,</span> <span class="s1">&#39;27&#39;</span><span class="p">,</span> <span class="s1">&#39;28&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;29&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="s1">&#39;30&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">,</span> <span class="s1">&#39;7&#39;</span><span class="p">,</span> <span class="s1">&#39;8&#39;</span><span class="p">,</span> <span class="s1">&#39;9&#39;</span><span class="p">,</span> <span class="s1">&#39;avBlue&#39;</span><span class="p">,</span> <span class="s1">&#39;avGreen&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;avRed&#39;</span><span class="p">,</span> <span class="s1">&#39;avWhite&#39;</span><span class="p">,</span> <span class="s1">&#39;bordes&#39;</span><span class="p">,</span> <span class="s1">&#39;bordes32&#39;</span><span class="p">,</span> <span class="s1">&#39;boscosidad&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;curtWhite&#39;</span><span class="p">,</span> <span class="s1">&#39;curtosisImagenBinarizada&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean0pow0&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;frecbean0pow1&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean0pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean0pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean1pow0&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;frecbean1pow1&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean1pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean1pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean2pow0&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;frecbean2pow1&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean2pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean2pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean3pow0&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;frecbean3pow1&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean3pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean3pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean4pow0&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;frecbean4pow1&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean4pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean4pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean5pow0&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;frecbean5pow1&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean5pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean5pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean6pow0&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;frecbean6pow1&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean6pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean6pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean7pow0&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;frecbean7pow1&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean7pow2&#39;</span><span class="p">,</span> <span class="s1">&#39;frecbean7pow3&#39;</span><span class="p">,</span> <span class="s1">&#39;imgSize&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="s1">&#39;lines32&#39;</span><span class="p">,</span> <span class="s1">&#39;maxBlue&#39;</span><span class="p">,</span> <span class="s1">&#39;maxGreen&#39;</span><span class="p">,</span> <span class="s1">&#39;maxRed&#39;</span><span class="p">,</span> <span class="s1">&#39;maxWhite&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;minBlue&#39;</span><span class="p">,</span> <span class="s1">&#39;minGreen&#39;</span><span class="p">,</span> <span class="s1">&#39;minRed&#39;</span><span class="p">,</span> <span class="s1">&#39;minWhite&#39;</span><span class="p">,</span> <span class="s1">&#39;num_piks_White&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;orbMatch&#39;</span><span class="p">,</span> <span class="s1">&#39;orbMatchThreshold&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g0b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g0b1&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g0b2&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;r0g1b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g1b1&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g1b2&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g2b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g2b1&#39;</span><span class="p">,</span> <span class="s1">&#39;r0g2b2&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;r1g0b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g0b1&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g0b2&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g1b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g1b1&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g1b2&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;r1g2b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g2b1&#39;</span><span class="p">,</span> <span class="s1">&#39;r1g2b2&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g0b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g0b1&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g0b2&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;r2g1b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g1b1&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g1b2&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g2b0&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g2b1&#39;</span><span class="p">,</span> <span class="s1">&#39;r2g2b2&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;simetriaImagenBinarizada&#39;</span><span class="p">,</span> <span class="s1">&#39;skewWhite&#39;</span><span class="p">,</span> <span class="s1">&#39;stdBlue&#39;</span><span class="p">,</span> <span class="s1">&#39;stdGreen&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;stdRed&#39;</span><span class="p">,</span> <span class="s1">&#39;stdWhite&#39;</span><span class="p">,</span> <span class="s1">&#39;sumaUmbral&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_0&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_1&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;textur68_10&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_11&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_12&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_13&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;textur68_14&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_15&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_16&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_17&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;textur68_2&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_3&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_4&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_5&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;textur68_6&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_7&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_8&#39;</span><span class="p">,</span> <span class="s1">&#39;textur68_9&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;textur6_0&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_1&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_2&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_3&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_4&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;textur6_5&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_6&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_7&#39;</span><span class="p">,</span> <span class="s1">&#39;textur6_8&#39;</span><span class="p">,</span> <span class="s1">&#39;visibilidad&#39;</span><span class="p">]</span>
+
+    <span class="n">diclist</span> <span class="o">=</span> <span class="p">[</span><span class="n">dic_change</span><span class="p">]</span>
+    <span class="n">dftemp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">diclist</span><span class="p">)</span>
+    <span class="n">vector_image</span> <span class="o">=</span> <span class="n">dftemp</span><span class="p">[</span><span class="n">feature_names</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>  <span class="c1"># dftemp.values</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+        <span class="n">clf</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">vector_image</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Retorna 1 si es deforestacion 0 si es no deforestacion</span></div>
+
+
+<span class="k">def</span> <span class="nf">changePointColor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span>
+
+    <span class="c1"># define ranges: label, lower value, upper value, color name</span>
+    <span class="c1"># in the field named &#39;random&#39; (attributes table)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s1">&#39;no_info&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;doubtful&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;def_confirmed&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># create a category for each item in values</span>
+    <span class="n">ranges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+        <span class="n">symbol</span> <span class="o">=</span> <span class="n">QgsSymbol</span><span class="o">.</span><span class="n">defaultSymbol</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">geometryType</span><span class="p">())</span>
+        <span class="n">symbol</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">QColor</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
+        <span class="n">rng</span> <span class="o">=</span> <span class="n">QgsRendererRange</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+        <span class="n">ranges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rng</span><span class="p">)</span>
+
+    <span class="c1"># create the renderer and assign it to a layer</span>
+    <span class="n">expression</span> <span class="o">=</span> <span class="s1">&#39;deforest&#39;</span>  <span class="c1"># field name</span>
+    <span class="n">renderer</span> <span class="o">=</span> <span class="n">QgsGraduatedSymbolRenderer</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">ranges</span><span class="p">)</span>
+    <span class="n">layer</span><span class="o">.</span><span class="n">setRenderer</span><span class="p">(</span><span class="n">renderer</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">pngs2geotifs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">zoom</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">pixels</span> <span class="o">=</span> <span class="mi">256</span>
+    <span class="n">epsg</span> <span class="o">=</span> <span class="mi">4326</span>
+     <span class="c1"># r=root, d=directories, f = files</span>
+    <span class="n">groupName</span> <span class="o">=</span> <span class="s2">&quot;PlanetTiles&quot;</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">QgsProject</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">layerTreeRoot</span><span class="p">()</span>
+    <span class="n">groupt</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">addGroup</span><span class="p">(</span><span class="n">groupName</span><span class="p">)</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">getFeatures</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">:</span>
+        <span class="n">fileNameA</span> <span class="o">=</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;tile_A&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span>
+        <span class="n">fileNameB</span> <span class="o">=</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;tile_B&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span>
+        <span class="n">raster_layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">layer</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">QgsProject</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">mapLayers</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span> <span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s1">&#39;tile_A&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.tif&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">raster_layers</span><span class="p">):</span>
+            <span class="n">pathB</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outRaster</span><span class="p">,</span> <span class="n">fileNameB</span><span class="p">)</span>
+            <span class="n">pathA</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outRaster</span><span class="p">,</span> <span class="n">fileNameA</span><span class="p">)</span>
+            <span class="n">xA</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">fileNameA</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+            <span class="n">google_xA</span><span class="p">,</span> <span class="n">google_yA</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">xA</span><span class="p">[</span><span class="mi">6</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">xA</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">xB</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">fileNameB</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+            <span class="n">google_xB</span><span class="p">,</span> <span class="n">google_yB</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">xB</span><span class="p">[</span><span class="mi">6</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">xB</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">google_xA</span> <span class="o">==</span> <span class="n">google_xB</span> <span class="ow">and</span> <span class="n">google_yA</span> <span class="o">==</span> <span class="n">google_yB</span><span class="p">:</span>
+                <span class="n">group</span> <span class="o">=</span> <span class="n">groupt</span><span class="o">.</span><span class="n">addGroup</span><span class="p">(</span><span class="n">xA</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">xA</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+                <span class="n">pathAtif</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outRaster</span><span class="p">,</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;tile_A&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.tif&quot;</span><span class="p">)</span>
+                <span class="n">pathBtif</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outRaster</span><span class="p">,</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;tile_b&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.tif&quot;</span><span class="p">)</span>
+
+                <span class="n">image_procesing_functions</span><span class="o">.</span><span class="n">png2GeoTif</span><span class="p">(</span><span class="n">pathB</span><span class="p">,</span> <span class="n">pathBtif</span><span class="p">,</span> <span class="n">google_xB</span><span class="p">,</span> <span class="n">google_yB</span><span class="p">,</span> <span class="n">zoom</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">epsg</span><span class="p">)</span>
+                <span class="n">rasterlyr</span> <span class="o">=</span> <span class="n">QgsRasterLayer</span><span class="p">(</span><span class="n">pathBtif</span><span class="p">,</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;tile_B&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.tif&quot;</span><span class="p">)</span>
+                <span class="n">QgsProject</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">addMapLayer</span><span class="p">(</span><span class="n">rasterlyr</span><span class="p">)</span>
+                <span class="n">layer</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">findLayer</span><span class="p">(</span><span class="n">rasterlyr</span><span class="o">.</span><span class="n">id</span><span class="p">())</span>
+                <span class="n">clone</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+                <span class="n">group</span><span class="o">.</span><span class="n">insertChildNode</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">clone</span><span class="p">)</span>
+                <span class="n">root</span><span class="o">.</span><span class="n">removeChildNode</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+
+                <span class="n">image_procesing_functions</span><span class="o">.</span><span class="n">png2GeoTif</span><span class="p">(</span><span class="n">pathA</span><span class="p">,</span> <span class="n">pathAtif</span><span class="p">,</span> <span class="n">google_xA</span><span class="p">,</span> <span class="n">google_yA</span><span class="p">,</span> <span class="n">zoom</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">epsg</span><span class="p">)</span>
+                <span class="n">rasterlyr</span> <span class="o">=</span> <span class="n">QgsRasterLayer</span><span class="p">(</span><span class="n">pathAtif</span><span class="p">,</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;tile_A&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.tif&quot;</span><span class="p">)</span>
+                <span class="n">QgsProject</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">addMapLayer</span><span class="p">(</span><span class="n">rasterlyr</span><span class="p">)</span>
+                <span class="n">layer</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">findLayer</span><span class="p">(</span><span class="n">rasterlyr</span><span class="o">.</span><span class="n">id</span><span class="p">())</span>
+                <span class="n">clone</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+                <span class="n">group</span><span class="o">.</span><span class="n">insertChildNode</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">clone</span><span class="p">)</span>
+                <span class="n">root</span><span class="o">.</span><span class="n">removeChildNode</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+
+
+        <span class="c1">#openRaster(self, dst_filename, pre)</span>
+
+
+
+
+<div class="viewcode-block" id="openRaster"><a class="viewcode-back" href="../../code.html#core.tile_preprocess.openRaster">[docs]</a><span class="k">def</span> <span class="nf">openRaster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">pre</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Open vector from file&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="o">.</span><span class="n">addRasterLayer</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">pre</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DefPointValidator 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, ga.becerra10, hc.torres , my.castro10, rj.santacruz @uniandes.edu.co;   ggalindo@ideam.gov.co.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>
