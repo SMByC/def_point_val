@@ -34,7 +34,7 @@ import os.path
 #Added lybraries
 from qgis.core import *
 from os.path import expanduser
-from .core import  down_load_tiles, tile_preprocess
+from .core import  down_load_tiles, tile_preprocess, tile_proces_functions
 
 class DefPointValidator:
     """QGIS Plugin Implementation."""
@@ -270,9 +270,15 @@ class DefPointValidator:
         down_load_tiles.getTile(self)
         umbralTamano = 100000
         umbralVisibilidad = 80
-        tile_preprocess.getCoupleVectors(self, umbralTamano, umbralVisibilidad )
-        tile_preprocess.changePointColor(self)
-        #tile_preprocess.pngs2geotifs(self)
+        tile_preprocess.identifyDeforest(self, umbralTamano, umbralVisibilidad )
+        values = (
+            ('no_info', -10, -1, 'blue'),
+            ('doubtful', 0, 0, 'green'),
+            ('def_confirmed', 1, 10, 'red'),
+        )
+        expression = 'deforest'  # field name
+        tile_proces_functions.setLayerRangeColor(self, self.inVector, values, expression)
+        tile_proces_functions.pngs2geotifs(self)
 
     # Aqui termina la programacion del complemento-------------------------------------------
 

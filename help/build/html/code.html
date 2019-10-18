@@ -261,35 +261,9 @@
 <div class="section" id="module-core.tile_preprocess">
 <span id="tile-pre-process"></span><h2>Tile Pre Process<a class="headerlink" href="#module-core.tile_preprocess" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="core.tile_preprocess.aply_clasification_model">
-<code class="sig-prename descclassname">core.tile_preprocess.</code><code class="sig-name descname">aply_clasification_model</code><span class="sig-paren">(</span><em class="sig-param">dic_change</em>, <em class="sig-param">model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tile_preprocess.html#aply_clasification_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.tile_preprocess.aply_clasification_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>dic_imagen= diccionario con descriptores de cambio entre las imagenes
-modelo: modleo sklearn persistido como objeto python3 con la libreria joblib</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.tile_preprocess.aply_regresion_model">
-<code class="sig-prename descclassname">core.tile_preprocess.</code><code class="sig-name descname">aply_regresion_model</code><span class="sig-paren">(</span><em class="sig-param">dic_image</em>, <em class="sig-param">model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tile_preprocess.html#aply_regresion_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.tile_preprocess.aply_regresion_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>dic_imagen= diccionario con los descriptorsde la imagen
-modelo: modleo sklearn persistido como objeto python3 con la libreria joblib</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.tile_preprocess.getCoupleVectors">
-<code class="sig-prename descclassname">core.tile_preprocess.</code><code class="sig-name descname">getCoupleVectors</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">umbralTamano</em>, <em class="sig-param">umbralVisibilidad</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tile_preprocess.html#getCoupleVectors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.tile_preprocess.getCoupleVectors" title="Permalink to this definition">¶</a></dt>
-<dd><p>get descriptor vector for befor and after images and for change</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.tile_preprocess.getFeatureVector">
-<code class="sig-prename descclassname">core.tile_preprocess.</code><code class="sig-name descname">getFeatureVector</code><span class="sig-paren">(</span><em class="sig-param">fileName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tile_preprocess.html#getFeatureVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.tile_preprocess.getFeatureVector" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build a feature vector dictionary for given image</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.tile_preprocess.openRaster">
-<code class="sig-prename descclassname">core.tile_preprocess.</code><code class="sig-name descname">openRaster</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">path</em>, <em class="sig-param">pre</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tile_preprocess.html#openRaster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.tile_preprocess.openRaster" title="Permalink to this definition">¶</a></dt>
-<dd><p>Open vector from file</p>
+<dt id="core.tile_preprocess.identifyDeforest">
+<code class="sig-prename descclassname">core.tile_preprocess.</code><code class="sig-name descname">identifyDeforest</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">umbralTamano</em>, <em class="sig-param">umbralVisibilidad</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tile_preprocess.html#identifyDeforest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.tile_preprocess.identifyDeforest" title="Permalink to this definition">¶</a></dt>
+<dd><p>clasify the scene of Tile containing point as deforested no deforested or no info</p>
 </dd></dl>
 
 </div>
