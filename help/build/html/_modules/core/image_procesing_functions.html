@@ -38,6 +38,7 @@
             
   <h1>Source code for core.image_procesing_functions</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#-------------------Import Lybraries------------------------------------------------------------------------------------</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -81,6 +82,8 @@
 
 
 <span class="kn">from</span> <span class="nn">osgeo</span> <span class="k">import</span> <span class="n">gdal</span><span class="p">,</span> <span class="n">osr</span>
+
+<span class="c1">#------------------------------------------------------------------------------------------------------</span>
 
 <div class="viewcode-block" id="window"><a class="viewcode-back" href="../../code.html#core.image_procesing_functions.window">[docs]</a><span class="k">def</span> <span class="nf">window</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a sliding window (of width n) over data from the iterable</span>
@@ -149,19 +152,15 @@
 
     <span class="n">bordes</span> <span class="o">=</span> <span class="n">img_edged</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
     <span class="c1"># Se cuentan las linea rectas usando HoughLines</span>
-    <span class="n">lines</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">HoughLines</span><span class="p">(</span><span class="n">img_edged</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">,</span>
-                           <span class="mi">64</span><span class="p">)</span>  <span class="c1"># nomrmalmente deben se entre la curata y la midad de loz pixeles W.</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">HoughLines</span><span class="p">(</span><span class="n">img_edged</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">,</span><span class="mi">64</span><span class="p">)</span>  <span class="c1"># nomrmalmente deben se entre la curata y la midad de loz pixeles W.</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">lines</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="mi">0</span>
-
     <span class="k">except</span><span class="p">:</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="mi">0</span>
-
     <span class="c1"># Luego para la imagen encogida</span>
-
     <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
     <span class="n">imgColor</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">norm_type</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">NORM_MINMAX</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">CV_32F</span><span class="p">)</span>
@@ -401,6 +400,10 @@
     <span class="n">kp</span><span class="p">,</span> <span class="n">des</span> <span class="o">=</span> <span class="n">orb</span><span class="o">.</span><span class="n">detectAndCompute</span><span class="p">(</span><span class="n">im0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;orbKp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kp</span>
     <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;orbDes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">des</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;orbDesLen&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">des</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">dictemp</span><span class="p">[</span><span class="s1">&#39;orbDesLen&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">return</span> <span class="n">dictemp</span></div>
 

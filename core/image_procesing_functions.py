@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#-------------------Import Lybraries------------------------------------------------------------------------------------
 import subprocess
 
 try:
@@ -42,6 +43,8 @@ except:
 
 
 from osgeo import gdal, osr
+
+#------------------------------------------------------------------------------------------------------
 
 def window(seq, n=2):
     """Returns a sliding window (of width n) over data from the iterable
@@ -110,19 +113,15 @@ def getBorderFeatures(img,nim):
 
     bordes = img_edged.sum()
     # Se cuentan las linea rectas usando HoughLines
-    lines = cv2.HoughLines(img_edged, 1, np.pi / 180,
-                           64)  # nomrmalmente deben se entre la curata y la midad de loz pixeles W.
+    lines = cv2.HoughLines(img_edged, 1, np.pi / 180,64)  # nomrmalmente deben se entre la curata y la midad de loz pixeles W.
     try:
         if lines.any():
             lines = len(lines)
         else:
             lines = 0
-
     except:
         lines = 0
-
     # Luego para la imagen encogida
-
     img = cv2.GaussianBlur(img, (3, 3), 0)
     img = cv2.resize(img, (32, 32), interpolation=cv2.INTER_AREA)
     imgColor = cv2.normalize(img, None, alpha=0, beta=256, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
@@ -362,6 +361,10 @@ def get_orb_descriptors(im):
     kp, des = orb.detectAndCompute(im0, None)
     dictemp['orbKp'] = kp
     dictemp['orbDes'] = des
+    try:
+        dictemp['orbDesLen'] = len(des)
+    except:
+        dictemp['orbDesLen'] = 0
 
     return dictemp
 

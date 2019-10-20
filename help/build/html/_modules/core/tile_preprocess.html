@@ -231,16 +231,15 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">inVector</span><span class="o">.</span><span class="n">changeAttributeValue</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">id_new_col_descriptorsD</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">forestChange</span><span class="p">))</span>
 
         <span class="c1">#----------Add polygons to polygon layer--------------------------------------------------------------</span>
+        <span class="n">defva</span><span class="o">=-</span><span class="mi">1</span>
         <span class="k">if</span> <span class="n">forestChange</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">defva</span><span class="o">=</span><span class="mi">1</span>
             <span class="k">if</span> <span class="n">tempEstimatedDeforestation</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">defva</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tempEstimatedDeforestation</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">tempEstimatedDeforestation</span> <span class="o">&gt;</span> <span class="mi">190</span><span class="p">:</span>
-                    <span class="n">defva</span> <span class="o">=</span> <span class="mi">200</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">defva</span> <span class="o">=</span> <span class="n">tempEstimatedDeforestation</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">defva</span><span class="o">=</span><span class="mi">1</span>
+                    <span class="n">defva</span> <span class="o">=</span> <span class="mi">190</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">defva</span> <span class="o">=</span> <span class="n">forestChange</span>
+            <span class="n">defva</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">forestChange</span><span class="p">)</span>
 
         <span class="n">fileNameA</span> <span class="o">=</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;tile_A&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span>
         <span class="n">corners</span><span class="o">=</span><span class="n">getCorners</span><span class="p">(</span><span class="n">fileNameA</span><span class="p">)</span>

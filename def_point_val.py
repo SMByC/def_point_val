@@ -257,9 +257,9 @@ class DefPointValidator:
             int(self.yearB)) + "_" + monthBefore + "_mosaic"  # "global_monthly_2019_01_mosaic"
         self.mosaicNameAfter = "global_monthly_" + str(int(self.yearA)) + "_" + monthAfter + "_mosaic"
 
-        self.path2model_boscosidad = os.path.join(os.path.dirname(__file__), 'models','modelo_boscosidad_2019-09-29.joblib')
-        self.path2model_visibilidad = os.path.join(os.path.dirname(__file__), 'models','modelo_visibilidad_2019-09-19.joblib')
-        self.path2model_deforest = os.path.join(os.path.dirname(__file__), 'models','modelo_cambio_2019-10-16_ACCU_0.8688024408848207.joblib')
+        self.path2model_boscosidad = os.path.join(os.path.dirname(__file__), 'models','modelo_boscosidad_2019-10-19_RMSE_9.4.joblib')
+        self.path2model_visibilidad = os.path.join(os.path.dirname(__file__), 'models','modelo_visibilidad_2019-10-19_RMSE_11.9.joblib')
+        self.path2model_deforest = os.path.join(os.path.dirname(__file__), 'models','modelo_cambio_2019-10-19_ACCU_0.87.joblib')
 
     def buffer(self):
         """
@@ -271,6 +271,7 @@ class DefPointValidator:
         umbralTamano = 100000
         umbralVisibilidad = 80
         tile_preprocess.identifyDeforest(self, umbralTamano, umbralVisibilidad )
+        """
         values = (
             ('no_info', -10, -1, 'blue'),
             ('doubtful', 0, 0, 'green'),
@@ -278,6 +279,7 @@ class DefPointValidator:
         )
         expression = 'deforest'  # field name
         tile_proces_functions.setLayerRangeColor(self, self.inVector, values, expression)
+        """
         tile_proces_functions.pngs2geotifs(self)
 
     # Aqui termina la programacion del complemento-------------------------------------------

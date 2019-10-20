@@ -192,16 +192,15 @@ def identifyDeforest(self, umbralTamano, umbralVisibilidad):
                     self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsD, int(forestChange))
 
         #----------Add polygons to polygon layer--------------------------------------------------------------
+        defva=-1
         if forestChange > 0:
+            defva=1
             if tempEstimatedDeforestation > 0:
+                defva = int(tempEstimatedDeforestation)
                 if tempEstimatedDeforestation > 190:
-                    defva = 200
-                else:
-                    defva = tempEstimatedDeforestation
-            else:
-                defva=1
+                    defva = 190
         else:
-            defva = forestChange
+            defva = int(forestChange)
 
         fileNameA = feature['tile_A'] + ".png"
         corners=getCorners(fileNameA)
