@@ -234,7 +234,7 @@ def identifyDeforest(self, umbralTamano, umbralVisibilidad):
     values = (
             ('no_info', -10, -1, 'blue'),
             ('doubtful', 0, 0, 'green'),
-            ('def_confirmed', 1, 10, 'red'),
+            ('def_confirmed', 1, 1000, 'red'),
         )
     expression = 'deforest'  # field name
 
