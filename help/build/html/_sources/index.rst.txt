@@ -24,12 +24,13 @@ and Gustavo Galindo.
 Is in test version the clasification accuracy is actualy about 75%
 
 Contents:
-
+==================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   how_to_use_it
    code
 
 Indices and tables

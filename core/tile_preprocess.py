@@ -133,13 +133,13 @@ def identifyDeforest(self, umbralTamano, umbralVisibilidad):
                 #-----------Firs Visibility (V) and Fores percentage (B)----------------------------------------------------------------
                 Vb = round(tile_proces_functions.aply_regresion_model(dicB, self.path2model_visibilidad), 0)
 
-                Bb = round(tile_proces_functions.aply_regresion_model(dicB, self.path2model_boscosidad), 0)
+                Bb = round(tile_proces_functions.aply_foresty_model(dicB, self.path2model_boscosidad), 0)
                 dicB['boscosidad'] = Bb
                 dicB['visibilidad'] = Vb
 
                 Va = round(tile_proces_functions.aply_regresion_model(dicA, self.path2model_visibilidad), 0)
 
-                Ba = round(tile_proces_functions.aply_regresion_model(dicA, self.path2model_boscosidad), 0)
+                Ba = round(tile_proces_functions.aply_foresty_model(dicA, self.path2model_boscosidad), 0)
                 dicA['boscosidad'] = Ba
                 dicA['visibilidad'] = Va
 

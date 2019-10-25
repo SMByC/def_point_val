@@ -99,6 +99,24 @@ def getFeatureVector(fileName):
 
 
 # Funcion para asignar punta de calidad (visibilidad) de 0 a 100%.
+
+
+
+def aply_foresty_model(dic_image, model):
+    """
+    dic_imagen= diccionario con los descriptorsde la imagen
+    modelo: modleo sklearn persistido como objeto python3 con la libreria joblib
+    """
+    feature_names = ["orbDesLen","r0g0b0","skewWhite","0","curtWhite","r0g0b1","bordes32","textur68_12","avBlue","textur68_17"]
+
+    diclist = [dic_image]
+    dftemp = pd.DataFrame(diclist)
+    vector_image = dftemp[feature_names].values#dftemp.values
+    with open(model, 'rb') as fo:
+        clf = load(model)
+        y = clf.predict(vector_image)
+    return y[0]
+
 def aply_regresion_model(dic_image, model):
     """
     dic_imagen= diccionario con los descriptorsde la imagen
@@ -146,7 +164,9 @@ def aply_clasification_model(dic_change, model):
     dic_imagen= diccionario con descriptores de cambio entre las imagenes
     modelo: modleo sklearn persistido como objeto python3 con la libreria joblib
     """
-    feature_names = ['0', '1', '10', '11', '12', '13', '14', '15', '16', '17', '18',
+
+    """
+        ['0', '1', '10', '11', '12', '13', '14', '15', '16', '17', '18',
        '19', '2', '20', '21', '22', '23', '24', '25', '26', '27', '28',
        '29', '3', '30', '4', '5', '6', '7', '8', '9', 'avBlue', 'avGreen',
        'avRed', 'avWhite', 'bordes', 'bordes32', 'boscosidad',
@@ -174,6 +194,20 @@ def aply_clasification_model(dic_change, model):
        'textur68_6', 'textur68_7', 'textur68_8', 'textur68_9',
        'textur6_0', 'textur6_1', 'textur6_2', 'textur6_3', 'textur6_4',
        'textur6_5', 'textur6_6', 'textur6_7', 'textur6_8', 'visibilidad']
+    """
+
+    feature_names = ['0', '1', '10', '11', '12', '13', '14', '15', '16', '17', '18',
+       '19', '2', '20', '21', '22', '23', '24', '25', '26', '27', '28',
+       '29', '3', '30', '4', '5', '6', '7', '8', '9','avWhite', 'bordes', 'bordes32', 'boscosidad',
+       'curtWhite', 'curtosisImagenBinarizada', 'lines',
+       'lines32', 'maxWhite','minWhite', 'orbDesLen',
+       'orbMatch', 'orbMatchThreshold',
+       'simetriaImagenBinarizada', 'skewWhite', 'stdWhite', 'sumaUmbral',
+        'textur68_0', 'textur68_1',
+       'textur68_10', 'textur68_11', 'textur68_12', 'textur68_13',
+       'textur68_14', 'textur68_15', 'textur68_16', 'textur68_17',
+       'textur68_2', 'textur68_3', 'textur68_4', 'textur68_5',
+       'textur68_6', 'textur68_7', 'textur68_8', 'textur68_9', 'visibilidad']
     diclist = [dic_change]
     dftemp = pd.DataFrame(diclist)
     vector_image = dftemp[feature_names].values  # dftemp.values

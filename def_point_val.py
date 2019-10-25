@@ -257,9 +257,9 @@ class DefPointValidator:
             int(self.yearB)) + "_" + monthBefore + "_mosaic"  # "global_monthly_2019_01_mosaic"
         self.mosaicNameAfter = "global_monthly_" + str(int(self.yearA)) + "_" + monthAfter + "_mosaic"
 
-        self.path2model_boscosidad = os.path.join(os.path.dirname(__file__), 'models','modelo_boscosidad_2019-10-19_RMSE_9.4.joblib')
+        self.path2model_boscosidad = os.path.join(os.path.dirname(__file__), 'models','modelo_boscosidad_2019-10-23_RMSE_10.7.joblib')
         self.path2model_visibilidad = os.path.join(os.path.dirname(__file__), 'models','modelo_visibilidad_2019-10-19_RMSE_11.9.joblib')
-        self.path2model_deforest = os.path.join(os.path.dirname(__file__), 'models','modelo_cambio_2019-10-19_ACCU_0.87.joblib')
+        self.path2model_deforest = os.path.join(os.path.dirname(__file__), 'models','modelo_cambio_2019-10-24_ACCU_0.78resumidoOK.joblib')
 
     def buffer(self):
         """
