@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Requirements &#8212; DefPointValidator 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Code documentation" href="code.html" />
+    <link rel="prev" title="Welcome to DefPointValidator’s documentation!" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="code.html" title="Code documentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to DefPointValidator’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DefPointValidator 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="requirements">
+<h1>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>GQGIS V 3.8</p></li>
+<li><p>Planet API Key with rights to download global montly mosaics.</p></li>
+<li><p>Create a enviromental variable name it as “PL_API_KEY” and asing the Planet API key as value</p></li>
+</ul>
+</div>
+<div class="section" id="use">
+<h1>Use<a class="headerlink" href="#use" title="Permalink to this headline">¶</a></h1>
+<p>This plugin evaluate deforestation comparing 2 planet Tile scenes “Before” adn “After”.
+You should have a point vector layer. This points should be references to places you want to evaluate.</p>
+<div class="section" id="open-the-def-point-val-plugin">
+<h2>Open the def_point_val plugin<a class="headerlink" href="#open-the-def-point-val-plugin" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/icono.png" src="_images/icono.png" />
+</div>
+<div class="section" id="load-the-vector-layer">
+<h2>Load the vector layer<a class="headerlink" href="#load-the-vector-layer" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/paso1.png" src="_images/paso1.png" />
+</div>
+<div class="section" id="chose-the-time-period-for-before-and-after-images-by-year-and-month-for-mosaic-image">
+<h2>Chose the time period for before and after images, by year and month for mosaic image.<a class="headerlink" href="#chose-the-time-period-for-before-and-after-images-by-year-and-month-for-mosaic-image" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/paso2.png" src="_images/paso2.png" />
+</div>
+<div class="section" id="select-a-directory-folder-were-planet-tile-image-will-be-downloaded">
+<h2>Select a directory (folder) were Planet Tile image will be downloaded.<a class="headerlink" href="#select-a-directory-folder-were-planet-tile-image-will-be-downloaded" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/paso3.png" src="_images/paso3.png" />
+</div>
+<div class="section" id="click-over-aceptar-button">
+<h2>Click over “Aceptar” button.<a class="headerlink" href="#click-over-aceptar-button" title="Permalink to this headline">¶</a></h2>
+<p>It will takes about 1 sec per point, after that the tiles will be displayed and point will take color
+blue for tiles will clouds that can’t be evaluated, red for tiles with deforestation and  green for tiles
+without deforestation or nor detect deforestation.</p>
+<p>It also will display a polygon vector layer with shadows for every Tile the color oif the shadow:</p>
+<ul class="simple">
+<li><p>Blue for Tiles with too much cloud or low visibility</p></li>
+<li><p>Green for Tiles without deforestation or not detected deforestation</p></li>
+<li><p>Yellow for tiles with few deforestation detected &lt;4ha</p></li>
+<li><p>Orange  for tiles with medium deforestation detected &lt;10 ha</p></li>
+<li><p>Red  for tiles with a lot of deforestation detected &gt;10ha</p></li>
+</ul>
+</div>
+<div class="section" id="resultado">
+<h2>Resultado<a class="headerlink" href="#resultado" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/resultado.png" src="_images/resultado.png" />
+<p>You cant review it over QGIS main window or you can use other plugins for validation an review like Akatama.</p>
+<img alt="_images/acatama.png" src="_images/acatama.png" />
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Requirements</a></li>
+<li><a class="reference internal" href="#use">Use</a><ul>
+<li><a class="reference internal" href="#open-the-def-point-val-plugin">Open the def_point_val plugin</a></li>
+<li><a class="reference internal" href="#load-the-vector-layer">Load the vector layer</a></li>
+<li><a class="reference internal" href="#chose-the-time-period-for-before-and-after-images-by-year-and-month-for-mosaic-image">Chose the time period for before and after images, by year and month for mosaic image.</a></li>
+<li><a class="reference internal" href="#select-a-directory-folder-were-planet-tile-image-will-be-downloaded">Select a directory (folder) were Planet Tile image will be downloaded.</a></li>
+<li><a class="reference internal" href="#click-over-aceptar-button">Click over “Aceptar” button.</a></li>
+<li><a class="reference internal" href="#resultado">Resultado</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to DefPointValidator’s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="code.html"
+                        title="next chapter">Code documentation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/how_to_use_it.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="code.html" title="Code documentation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to DefPointValidator’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DefPointValidator 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, ga.becerra10, hc.torres , my.castro10, rj.santacruz @uniandes.edu.co;   ggalindo@ideam.gov.co.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>
