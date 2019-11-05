@@ -304,9 +304,11 @@ def pngs2geotifs(self):
     pixels = 256
     epsg = 4326
      # r=root, d=directories, f = files
-    groupName = "PlanetTiles"
+    groupName = "PlanetTilesBefore"
     root = QgsProject.instance().layerTreeRoot()
-    groupt = root.addGroup(groupName)
+    groupB = root.addGroup(groupName)
+    groupName = "PlanetTilesAfter"
+    groupA = root.addGroup(groupName)
     features = self.inVector.getFeatures()
 
     for feature in features:
@@ -322,7 +324,7 @@ def pngs2geotifs(self):
             xB = str(fileNameB).split("_")
             google_xB, google_yB = int(xB[6]), int(xB[7].split(".")[0])
             if google_xA == google_xB and google_yA == google_yB:
-                group = groupt.addGroup(xA[6] + '_' + xA[7].split(".")[0])
+                #group = groupt.addGroup(xA[6] + '_' + xA[7].split(".")[0])
 
                 pathAtif = os.path.join(self.outRaster, feature['tile_A'] + ".tif")
                 pathBtif = os.path.join(self.outRaster, feature['tile_b'] + ".tif")
@@ -332,7 +334,7 @@ def pngs2geotifs(self):
                 QgsProject.instance().addMapLayer(rasterlyr)
                 layer = root.findLayer(rasterlyr.id())
                 clone = layer.clone()
-                group.insertChildNode(0, clone)
+                groupB.insertChildNode(0, clone)
                 root.removeChildNode(layer)
 
                 image_procesing_functions.png2GeoTif(pathA, pathAtif, google_xA, google_yA, zoom, pixels, epsg)
@@ -340,7 +342,7 @@ def pngs2geotifs(self):
                 QgsProject.instance().addMapLayer(rasterlyr)
                 layer = root.findLayer(rasterlyr.id())
                 clone = layer.clone()
-                group.insertChildNode(0, clone)
+                groupA.insertChildNode(0, clone)
                 root.removeChildNode(layer)
 
 

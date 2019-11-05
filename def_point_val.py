@@ -280,7 +280,10 @@ class DefPointValidator:
         expression = 'deforest'  # field name
         tile_proces_functions.setLayerRangeColor(self, self.inVector, values, expression)
         """
-        tile_proces_functions.pngs2geotifs(self)
+        try:
+            tile_proces_functions.pngs2geotifs(self)
+        except:
+            pass
 
     # Aqui termina la programacion del complemento-------------------------------------------
 
