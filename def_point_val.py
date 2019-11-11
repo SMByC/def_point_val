@@ -260,6 +260,11 @@ class DefPointValidator:
         self.path2model_boscosidad = os.path.join(os.path.dirname(__file__), 'models','modelo_boscosidad_2019-10-23_RMSE_10.7.joblib')
         self.path2model_visibilidad = os.path.join(os.path.dirname(__file__), 'models','modelo_visibilidad_2019-10-19_RMSE_11.9.joblib')
         self.path2model_deforest = os.path.join(os.path.dirname(__file__), 'models','modelo_cambio_2019-10-24_ACCU_0.78resumidoOK.joblib')
+        self.path2model_harry = os.path.join(os.path.dirname(__file__), 'models','finalized_model.joblib')
+        self.path2model_boscosidad2=os.path.join(os.path.dirname(__file__), 'models','modelo_boscosidad_2019-10-07_RMSE_8.6.joblib')
+        self.path2model_directo=os.path.join(os.path.dirname(__file__), 'models','modelo_cambio_directo_2019-11-10_ACCU_0.87_OK_.joblib')
+        self.path2model_change=os.path.join(os.path.dirname(__file__), 'models','modelo_cambio_2019-11-10_ACCUVAL_0.82_ACCUTR_0.81.joblib')
+
 
     def buffer(self):
         """
@@ -270,7 +275,7 @@ class DefPointValidator:
         down_load_tiles.getTile(self)
         umbralTamano = 100000
         umbralVisibilidad = 80
-        tile_preprocess.identifyDeforest(self, umbralTamano, umbralVisibilidad )
+        tile_preprocess.identifyDeforest(self, umbralTamano, umbralVisibilidad ,'gus')
         """
         values = (
             ('no_info', -10, -1, 'blue'),
@@ -280,10 +285,10 @@ class DefPointValidator:
         expression = 'deforest'  # field name
         tile_proces_functions.setLayerRangeColor(self, self.inVector, values, expression)
         """
-        try:
-            tile_proces_functions.pngs2geotifs(self)
-        except:
-            pass
+        #try:
+        #    tile_proces_functions.pngs2geotifs(self)
+        #except:
+            #pass
 
     # Aqui termina la programacion del complemento-------------------------------------------
 

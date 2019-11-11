@@ -26,7 +26,14 @@ except:
 #library for load and save python object including models
 
 try:
-    from joblib import dump, load
+    import joblib
+    a=joblib.__version__
+    if a=='0.13.2':
+        from joblib import dump, load
+    else:
+        subprocess.check_call(['python3', '-m', 'pip', 'uninstall', 'joblib', '-y'])
+        subprocess.check_call(['python3', '-m', 'pip', 'install', 'joblib==0.13.2'])
+        from joblib import dump, load
 except:
     subprocess.check_call(['python3', '-m', 'pip', 'install', 'joblib'])
 
@@ -55,13 +62,13 @@ except:
     subprocess.check_call(['python3', '-m', 'pip', 'install', 'pyGeoTile'])
 
 # Custum build functions
-from . import  tile_proces_functions
+from . import tile_proces_functions, harryModel, last_try
 
 #Codigo para cargar lista de puntos
 
 
 
-def identifyDeforest(self, umbralTamano, umbralVisibilidad):
+def identifyDeforest(self, umbralTamano, umbralVisibilidad, harry):
     """ clasify the scene of Tile containing point as deforested no deforested or no info
     """
     #-------------Creatin a vector layer for Tile poligons-----------------------------------
@@ -124,11 +131,13 @@ def identifyDeforest(self, umbralTamano, umbralVisibilidad):
             if b > umbralTamano and a > umbralTamano:
                 #------Now descriptors are calculated for image that pass the threshold size----------------
 
+
+
+
                 dicB = tile_proces_functions.getFeatureVector(pathB)
                 dicA = tile_proces_functions.getFeatureVector(pathA)
-                #dicB0 = dicB
-                #dicA0 = dicA
-
+                # dicB0 = dicB
+                # dicA0 = dicA
                 #-------Whit descriptors ready, models area aplyed------------------------------------------
                 #-----------Firs Visibility (V) and Fores percentage (B)----------------------------------------------------------------
                 Vb = round(tile_proces_functions.aply_regresion_model(dicB, self.path2model_visibilidad), 0)
@@ -150,32 +159,43 @@ def identifyDeforest(self, umbralTamano, umbralVisibilidad):
                 #--------If visibility is grater than threshol (umbralVisibilidad) change area evaluated---------
                 if Va > umbralVisibilidad and Vb > umbralVisibilidad:
                     goodones = goodones+1
-                    #Search for orb feature matching
-                    try:
-                        bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-                        # Match descriptors.
-                        matches = bf.match(dicB['orbDes'], dicA['orbDes'])
-                        good = []
-                        tempvar = 1
-                    except:
-                        tempvar = 0
-                        matches = []
-                        good = []
-                    for m in matches:
-                        if m.distance < 63:
-                            good.append([m.distance])
 
-                    # Optain de diference or change in every descriptor
-                    df = pd.DataFrame([dicB, dicA])
-                    df = df.drop(columns=['orbKp', 'orbDes'])
-                    dif = df.loc[0].values - df.loc[1].values
-                    zipbObj = zip(df.columns, dif)
-                    dic = dict(zipbObj)
-                    dic['orbMatch'] = len(matches)
-                    dic['orbMatchThreshold'] = len(good)
+                    if harry == 'si':
+                        forestChange = harryModel.aplicar_modelo(self,pathB, pathA)
+                    elif harry == 'gus':
+                        forestChange = last_try.evaluateChange(pathA, pathB,
+                                                      self.path2model_visibilidad,
+                                                               self.path2model_boscosidad2,
+                                                    self.path2model_directo, self.path2model_change,'si')
+                    else:
+
+                        #Search for orb feature matching
+                        try:
+                            bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+                            # Match descriptors.
+                            matches = bf.match(dicB['orbDes'], dicA['orbDes'])
+                            good = []
+                            tempvar = 1
+                        except:
+                            tempvar = 0
+                            matches = []
+                            good = []
+                        for m in matches:
+                            if m.distance < 63:
+                                good.append([m.distance])
+
+                        # Optain de diference or change in every descriptor
+                        df = pd.DataFrame([dicB, dicA])
+                        df = df.drop(columns=['orbKp', 'orbDes'])
+                        dif = df.loc[0].values - df.loc[1].values
+                        zipbObj = zip(df.columns, dif)
+                        dic = dict(zipbObj)
+                        dic['orbMatch'] = len(matches)
+                        dic['orbMatchThreshold'] = len(good)
                     #Now we have new change descriptor dictionari including orb matching geatures
 
-                    forestChange = tile_proces_functions.aply_clasification_model(dic, self.path2model_deforest)
+                        forestChange = tile_proces_functions.aply_clasification_model(dic, self.path2model_deforest)
+
                     tempEstimatedDeforestation = dicB['boscosidad']-dicA['boscosidad']
                     if abs(tempEstimatedDeforestation)<2:
                         tempEstimatedDeforestation = 0
@@ -188,7 +208,7 @@ def identifyDeforest(self, umbralTamano, umbralVisibilidad):
                     A = 'Bosocosidad: ' + str(dicA['boscosidad']) + ', Visibilidad: ' + str(dicA['visibilidad'])
                     self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsB, B)
                     self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsA,
-                                                       A)  # json.dumps(str(dicA['boscosidad'])))
+                                                           A)  # json.dumps(str(dicA['boscosidad'])))
                     self.inVector.changeAttributeValue(feature.id(), id_new_col_descriptorsD, int(forestChange))
 
         #----------Add polygons to polygon layer--------------------------------------------------------------
