@@ -55,63 +55,8 @@ except:
     subprocess.check_call(['python3', '-m', 'pip', 'install', 'pyGeoTile'])
 
 
-# Images and computer vision Libraries
-try:
-    import cv2
-except:
-    subprocess.check_call(['python3', '-m', 'pip', 'install', 'opencv-python'])
-#Math ans statistics
-try:
-    import numpy as np
-except:
-    subprocess.check_call(['python3', '-m', 'pip', 'install', 'numpy'])
-try:
-    import pandas as pd
-except:
-    subprocess.check_call(['python3', '-m', 'pip', 'install', 'pandas'])
-#library for load and save python object including models
-
-try:
-    from joblib import dump, load
-except:
-    subprocess.check_call(['python3', '-m', 'pip', 'install', 'joblib'])
-
-try:
-    import sklearn
-    a=sklearn.__version__
-    if a=='0.20.1':
-        from sklearn import ensemble
-        from sklearn import datasets
-        from sklearn.utils import shuffle
-        from sklearn.metrics import mean_squared_error, explained_variance_score
-    else:
-        subprocess.check_call(['python3', '-m', 'pip', 'uninstall', 'scikit-learn','-y'])
-        subprocess.check_call(['python3', '-m', 'pip', 'install', 'scikit-learn==0.20.1'])
-        from sklearn import ensemble
-        from sklearn import datasets
-        from sklearn.utils import shuffle
-        from sklearn.metrics import mean_squared_error, explained_variance_score
-
-except:
-    subprocess.check_call(['python3', '-m', 'pip', 'install', 'scikit-learn==0.20.1'])
-import subprocess
-
-try:
-    from pygeotile.tile import Tile
-except:
-    subprocess.check_call(['python3', '-m', 'pip', 'install', 'pyGeoTile'])
-
 from itertools import islice
 
-try:
-    import cv2
-except:
-    subprocess.check_call(['python3', '-m', 'pip', 'install', 'opencv-python'])
-
-try:
-    import numpy as np
-except:
-    subprocess.check_call(['python3', '-m', 'pip', 'install', 'numpy'])
 
 try:
     import math
@@ -126,18 +71,11 @@ except:
     subprocess.check_call(['python3', '-m', 'pip', 'install', 'scipy'])
 
 try:
-    import pandas as pd
-except:
-    subprocess.check_call(['python3', '-m', 'pip', 'install', 'pandas'])
-
-try:
     from skimage.feature import local_binary_pattern
 
 except:
     subprocess.check_call(['python3', '-m', 'pip', 'install', 'scikit-image'])
 
-
-from osgeo import gdal, osr
 
 #------------------------------------------------------------------------------------------------------------------------
 
